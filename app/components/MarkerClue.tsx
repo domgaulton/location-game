@@ -1,7 +1,7 @@
 'use client';
 
 import { LOCAL_STORAGE_KEY } from '@/consts';
-import { TGameLocalStorage, TMarkerClue } from '@/types';
+import { TMarkerClue } from '@/types';
 import Leaflet from 'leaflet';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
