@@ -1,6 +1,7 @@
 import { TGameObject } from './types';
 
 export const LOCAL_STORAGE_KEY = 'geohunts';
+export const STRIPE_PAYMENT_COOKIE = 'stripe-cookie';
 
 export const GAMES: TGameObject = {
   'pomeroy-street': {
