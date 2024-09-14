@@ -18,12 +18,44 @@ Leaflet.Icon.Default.mergeOptions({
 });
 
 const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [gameStatus, setGameStatus] = useState<TGameLocalStorage>({});
   const [location, setLocation] = useState({
     lat: startingLocation.lat,
     lng: startingLocation.lng,
     loaded: false,
   });
+
+  const requestLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log('User location:', position.coords);
+          setErrorMessage('');
+        },
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              setErrorMessage(
+                'Location access denied. Please enable location services and try again.'
+              );
+              break;
+            case error.POSITION_UNAVAILABLE:
+              setErrorMessage('Location information is unavailable.');
+              break;
+            case error.TIMEOUT:
+              setErrorMessage('The request to get user location timed out.');
+              break;
+            default:
+              setErrorMessage('An unknown error occurred.');
+              break;
+          }
+        }
+      );
+    } else {
+      setErrorMessage('Geolocation is not supported by this browser.');
+    }
+  };
 
   // Custom flashing blue dot icon
   const blueDotIcon = Leaflet.divIcon({
@@ -130,7 +162,23 @@ const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
           </MapContainer>
         </>
       ) : (
-        <p>Loading map...</p>
+        <div className="container mx-auto text-center py-6">
+          <h1 className="text-2xl font-bold mb-4">Allow Location Access</h1>
+          <p className="mb-4">
+            We need access to your location to enhance your experience.
+          </p>
+
+          <button
+            onClick={requestLocation}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Enable Location Services
+          </button>
+
+          {errorMessage && (
+            <div className="text-red-600 mt-4">{errorMessage}</div>
+          )}
+        </div>
       )}
     </div>
   );
