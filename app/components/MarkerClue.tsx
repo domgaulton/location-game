@@ -7,8 +7,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import handleUpdateGameScore from '../utils/handleUpdateGameScore';
 
-// const LOCATION_ACCURACY = 0.001;
-const LOCATION_ACCURACY = 0.1;
+const LOCATION_ACCURACY = 0.001;
 
 const MarkerClue = ({
   gameId,
