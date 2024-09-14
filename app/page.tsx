@@ -1,5 +1,7 @@
-import Game from './components/Game';
+import dynamic from 'next/dynamic';
+
+const GameDynamic = dynamic(() => import('./components/Game'), { ssr: false });
 
 export default function LocationTracker() {
-  return typeof window !== 'undefined' ? 'Loading...' : <Game />;
+  return <GameDynamic />;
 }
