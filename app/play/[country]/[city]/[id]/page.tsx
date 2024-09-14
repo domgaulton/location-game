@@ -2,7 +2,6 @@ import capitalise from '@/app/utils/capitalise';
 import { GAMES, STRIPE_PAYMENT_COOKIE } from '@/consts';
 import { TGameData, TPageTemplate } from '@/types';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import ElementsForm from '@/app/components/Checkout/ElementsForm';
@@ -102,19 +101,20 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
         <p>
           Your journey starts at <strong>Nunhead Green</strong>, a peaceful spot
           where locals gather for quiet walks. There, under the shade of the
-          ancient oak tree, you'll find your first clue: a riddle etched into a
-          plaque.
+          ancient oak tree, you&apos;ll find your first clue: a riddle etched
+          into a plaque.
         </p>
         <p>
           <em>
-            "To find the key to the old man's gold, look to the gate where the
-            stories are told."
+            &quot;To find the key to the old man&apos;s gold, look to the gate
+            where the stories are told.&quot;
           </em>
         </p>
         <p>
           From here, you must head toward <strong>Nunhead Cemetery</strong>, one
-          of London's "Magnificent Seven" cemeteries. The eerie, overgrown paths
-          will lead you to the second clue, hidden among the gravestones.
+          of London&apos;s &quot;Magnificent Seven&quot; cemeteries. The eerie,
+          overgrown paths will lead you to the second clue, hidden among the
+          gravestones.
         </p>
       </section>
 

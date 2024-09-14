@@ -13,7 +13,7 @@ import {
 import CustomDonationInput from './CustomDonationInput';
 import StripeTestCards from '@/app/components/Checkout/StripeTestCards';
 
-import { formatAmountForDisplay } from '@/app/lib/stripe/stripe-helpers';
+// import { formatAmountForDisplay } from '@/app/lib/stripe/stripe-helpers';
 import * as config from '@/app/lib/stripe/config';
 import getStripe from '@/app/lib/stripe/get-stripejs';
 import { createPaymentIntent } from '@/app/actions/stripe';

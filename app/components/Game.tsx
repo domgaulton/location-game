@@ -7,7 +7,6 @@ import Leaflet from 'leaflet';
 import MarkerClue from './MarkerClue';
 import { TGameData, TGameLocalStorage } from '@/types';
 import { LOCAL_STORAGE_KEY } from '@/consts';
-import { stripe } from '../lib/stripe';
 
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl:
