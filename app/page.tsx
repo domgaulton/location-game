@@ -8,25 +8,18 @@ export default function HomePage() {
     <div className="min-h-screen bg-blue-50 text-gray-800">
       {/* Header Section */}
       <header className="bg-blue-600 text-white py-12 text-center">
-        <h1 className="text-4xl font-bold mb-4">
-          Clue Quest: Adventure Awaits!
-        </h1>
+        <h1 className="text-4xl font-bold mb-4">GeoHunt: Adventure Awaits!</h1>
         <p className="text-xl">
           Explore, Solve, and Compete in Fun Location-Based Games
         </p>
-        <div className="mt-6">
-          <Link
-            href="/games"
-            className="bg-yellow-400 text-blue-900 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-yellow-300"
-          >
-            Play Now
-          </Link>
-          <Link
-            href="/adventures"
-            className="ml-4 bg-white text-blue-600 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-100"
-          >
-            Choose Your Adventure
-          </Link>
+        <div className="m-6">
+          <Image
+            src="/images/geohunts.webp"
+            alt="Mystery Tour"
+            className="w-full mb-4"
+            width={300}
+            height={200}
+          />
         </div>
       </header>
 
@@ -53,7 +46,7 @@ export default function HomePage() {
               className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
             >
               <Image
-                src="/images/portland.webp"
+                src="/images/portland.jpeg"
                 alt="Mystery Tour"
                 className="w-full mb-4"
                 width={300}
