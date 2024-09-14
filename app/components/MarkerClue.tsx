@@ -21,6 +21,12 @@ const MarkerClue = ({ currentLocation, markerPosition, clue }: TMarkerClue) => {
   const [submittedAnswer, setSubmittedAnswer] = useState<string>('');
   const [answerCorrect, setAnswerCorrect] = useState<boolean>(false);
 
+  const { lat: markerLat, lng: markerLng } = markerPosition;
+  const minLat = markerLat - LOCATION_ACCURACY;
+  const maxLat = markerLat + LOCATION_ACCURACY;
+  const minLng = markerLng - LOCATION_ACCURACY;
+  const maxLng = markerLng + LOCATION_ACCURACY;
+
   const handleInputChange = (e: {
     target: { value: SetStateAction<string> };
   }) => {
@@ -52,11 +58,6 @@ const MarkerClue = ({ currentLocation, markerPosition, clue }: TMarkerClue) => {
 
   useEffect(() => {
     const { lat: currentLat, lng: currentLng } = currentLocation;
-    const { lat: markerLat, lng: markerLng } = markerPosition;
-    const minLat = markerLat - LOCATION_ACCURACY;
-    const maxLat = markerLat + LOCATION_ACCURACY;
-    const minLng = markerLng - LOCATION_ACCURACY;
-    const maxLng = markerLng + LOCATION_ACCURACY;
 
     const inBetweenLat = currentLat > minLat && currentLat < maxLat;
     const inBetweenLng = currentLng > minLng && currentLng < maxLng;
