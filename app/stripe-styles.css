@@ -32,12 +32,12 @@ body {
   justify-content: center;
 }
 
-.container {
+/* .container {
   max-width: var(--container-width-max);
   padding: 45px 25px;
   display: flex;
   flex-direction: row;
-}
+} */
 
 .page-container {
   padding-bottom: 60px;
@@ -275,9 +275,9 @@ pre {
 }
 
 @media only screen and (max-width: 600px) {
-  .container {
+  /* .container {
     flex-direction: column;
-  }
+  } */
 
   .card {
     display: block;

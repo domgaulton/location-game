@@ -11,6 +11,34 @@ export const GAMES: TGameObject = {
     countries: ['England', 'UK'],
     cities: ['London'],
     metaDescription: 'Explore Pomeroy Street and find the hidden treasure!',
+    overview: `
+**Unravel the secrets of South East London**
+
+---
+
+## Introduction
+
+Deep in the heart of Nunhead, South East London, a hidden treasure has been forgotten by time. For centuries, rumors of its existence have circulated, but few have dared to search for it. The treasure, buried beneath layers of history, has been protected by riddles and clues scattered across the quiet streets of Nunhead. Are you brave enough to begin the hunt?
+
+## The Legend
+
+According to local folklore, the treasure once belonged to an eccentric Victorian inventor who lived in a grand house near Nunhead Cemetery. His inventions brought him wealth, but after his mysterious disappearance, his riches were never found.
+
+The treasure was said to be hidden in a series of underground tunnels that stretch from the cemetery to Peckham Rye Park. Over time, the inventor left behind cryptic clues to ensure that only the most clever could find his hidden wealth.
+
+## The Journey Begins
+
+Your journey starts at **Nunhead Green**, a peaceful spot where locals gather for quiet walks. There, under the shade of the ancient oak tree, you'll find your first clue: a riddle etched into a plaque.
+
+*"To find the key to the old man's gold, look to the gate where the stories are told."*
+
+From here, you must head toward **Nunhead Cemetery**, one of London's "Magnificent Seven" cemeteries. The eerie, overgrown paths will lead you to the second clue, hidden among the gravestones.
+
+## The Final Clue
+
+As you make your way past the old gravestones and mausoleums, you'll encounter your final clue near the **South Gate** of Nunhead Cemetery. Here, among the forgotten tombs, is a hidden key. The key unlocks a secret door—one that leads to the underground tunnels where the treasure lies hidden.
+
+But beware: only those with a sharp mind and steady heart can navigate the labyrinth of tunnels. The journey will test your resolve, but the reward is beyond measure. Good luck, treasure hunter!`,
     clues: [
       {
         clueId: '1',
@@ -39,6 +67,42 @@ export const GAMES: TGameObject = {
     countries: ['USA'],
     cities: ['Portland'],
     metaDescription: 'Explore Pomeroy Street and find the hidden treasure!',
+    overview: `
+**A Seaside Adventure Awaits!**
+
+---
+
+## Introduction
+
+Portland, Maine, a city known for its bustling seaport and rich history, holds more secrets than meets the eye. Somewhere along the cobbled streets and rocky shores, an ancient treasure lies hidden, waiting to be discovered by an adventurous soul. Legends of pirate gold, lost artifacts, and hidden maps have passed down through generations of seafarers. Will you be the one to uncover it?
+
+## The Legend
+
+In the late 1700s, a notorious pirate, Captain Ezra Blackwell, sailed the coast of Maine, plundering ships and terrorizing ports. But when a fierce storm struck his ship near Portland, he made a secret pact to hide his treasure somewhere along the coastline. His crew vanished, the shipwreck never found, but rumors of the hidden loot remain.
+
+They say Captain Blackwell left behind a series of clues and puzzles to ensure only the cleverest adventurer would find his gold. From the Old Port to the Eastern Promenade, the search spans the city’s most iconic landmarks.
+
+## The Adventure Begins
+
+Your adventure starts at **Portland Head Light**, one of the oldest and most iconic lighthouses in the United States. The waves crash against the cliffs as the wind whispers the first clue. Hidden near the lighthouse’s base is a weathered stone engraved with your first puzzle:
+
+*"The captain's gold was not for the brave, but for those who see beyond the wave."*
+
+Follow the shoreline to **Fort Williams Park**, where old fortifications overlook the Atlantic. The ruins are filled with mystery, but look closely—you’ll find the second clue etched into a rusted cannon, directing you deeper into the city.
+
+## The Hidden Trails
+
+Now, make your way to **Eastern Promenade**, a scenic trail that offers stunning views of Casco Bay. As you walk the winding paths, keep an eye on the rocky shores below. There’s a hidden marking on the rocks near the water—a symbol from Captain Blackwell’s crew. It's a pirate's mark pointing you towards the **Old Port**, where cobblestone streets and historic buildings hide the next part of the puzzle.
+
+Here, in the heart of Portland, you'll need to visit **Shipyard Brewing Company**. Search for a special bottle that’s been marked with an "X" and engraved with the final riddle. It's said to hold the key to where the treasure is buried.
+
+## The Final Challenge
+
+With the final riddle in hand, you must travel to **Peaks Island**, a short ferry ride away. On the island's hidden beaches, your treasure lies buried, but there is one last challenge: solving the final riddle. The island has many hidden coves and secret spots—only the truly clever will be able to piece together Captain Blackwell’s puzzle.
+
+---
+
+Good luck, adventurer! Portland’s secrets are yours to uncover—if you dare!`,
     clues: [
       {
         clueId: '1',

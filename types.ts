@@ -31,6 +31,7 @@ export type TGameData = {
   gameId: string;
   startingLocation: TLocation;
   clues: TMarkerClueData[];
+  overview?: string;
 };
 
 export type TGameObject = {
