@@ -43,9 +43,7 @@ const MarkerClue = ({
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSubmittedAnswer(userAnswer);
-    if (
-      stringSimilarity(userAnswer.toLowerCase(), answer.toLowerCase()) > 0.7
-    ) {
+    if (stringSimilarity(userAnswer, answer) > 0.7) {
       setAnswerCorrect(true);
 
       localStorage.setItem(

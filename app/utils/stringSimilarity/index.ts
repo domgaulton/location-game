@@ -4,8 +4,13 @@
 // and use Jaccard similarity to determine how similar two strings are.
 
 const stringSimilarity = (str1: string, str2: string): number => {
-  const set1 = new Set(str1.split(' '));
-  const set2 = new Set(str2.split(' '));
+  const cleanString = (str: string) =>
+    str
+      .toLowerCase() // Convert to lowercase for case-insensitive comparison
+      .replace(/[^\w\s]/gi, ''); // Remove all special characters
+
+  const set1 = new Set(cleanString(str1).split(' '));
+  const set2 = new Set(cleanString(str2).split(' '));
 
   const intersection = new Set([...set1].filter((x) => set2.has(x)));
   const union = new Set([...set1, ...set2]);
