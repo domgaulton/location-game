@@ -6,6 +6,7 @@ import Leaflet from 'leaflet';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import handleUpdateGameScore from '../utils/handleUpdateGameScore';
+import stringSimilarity from '../utils/stringSimilarity';
 
 const LOCATION_ACCURACY = 0.001;
 
@@ -42,7 +43,9 @@ const MarkerClue = ({
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSubmittedAnswer(userAnswer);
-    if (userAnswer.toLowerCase() === answer.toLowerCase()) {
+    if (
+      stringSimilarity(userAnswer.toLowerCase(), answer.toLowerCase()) > 0.7
+    ) {
       setAnswerCorrect(true);
 
       localStorage.setItem(
