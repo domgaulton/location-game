@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Leaflet from 'leaflet';
 import MarkerClue from './MarkerClue';
+import { TGameData, TGameLocalStorage } from '@/types';
+import { LOCAL_STORAGE_KEY } from '@/consts';
 
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -15,31 +17,56 @@ Leaflet.Icon.Default.mergeOptions({
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const CLUES = [
-  {
-    markerPosition: { lat: 51.47, lng: -0.05 },
-    clue: { question: 'What’s your favorite color?', answer: 'blue' },
-  },
-];
-const Game = () => {
+const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
+  const [gameStatus, setGameStatus] = useState<TGameLocalStorage>({});
   const [location, setLocation] = useState({
-    lat: 51.505,
-    lng: -0.09,
+    lat: startingLocation.lat,
+    lng: startingLocation.lng,
     loaded: false,
   });
 
   // Custom flashing blue dot icon
   const blueDotIcon = Leaflet.divIcon({
-    className: 'relative flex items-center justify-center w-4 h-4',
+    className: 'relative w-4 h-4',
     html: `
-      <div class="relative z-10 w-3 h-3 bg-blue-600 rounded-full animate-ping-slow"></div>
-      <div class="absolute top-[2px] left-[2px] z-0 w-2 h-2 bg-blue-500 rounded-full"></div>
-    `,
-    iconSize: [20, 20], // Size of the flashing dot
+      <div class="relative top-1.5 left-1.5 z-10 w-3 h-3 rounded-full bg-blue-600"></div>
+      <div class="absolute z-10 top-0 left-0 w-6 h-6 opacity-25 rounded-full bg-blue-600 animate-ping-slow"></div>`,
+    iconSize: [24, 24], // Size of the flashing dot
     popupAnchor: [0, -10], // Position of the popup in relation to the marker
   });
 
+  const handleUpdateScore = (points: number) => {
+    const duplicateGameStatus: TGameLocalStorage = { ...gameStatus };
+
+    const updatedScore = duplicateGameStatus[gameId]?.score
+      ? duplicateGameStatus[gameId]?.score + points
+      : points;
+
+    const updatedGameData: TGameLocalStorage = {
+      ...duplicateGameStatus,
+      [gameId]: {
+        ...duplicateGameStatus[gameId],
+        score: updatedScore,
+      },
+    };
+
+    setGameStatus(updatedGameData);
+  };
+
   useEffect(() => {
+    let previousGameStatus: TGameLocalStorage = {};
+
+    try {
+      previousGameStatus = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'
+      );
+      if (Object.keys(previousGameStatus).length) {
+        setGameStatus(previousGameStatus);
+      }
+    } catch (err) {
+      console.error('Error parsing local storage data');
+    }
+
     if ('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
         (position) => {
@@ -55,38 +82,53 @@ const Game = () => {
         { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 }
       );
     } else {
-      alert('Geolocation is not supported by your browser');
+      alert(`To play ${name}, you need to enable location services.`);
     }
-  }, []);
+  }, [name]);
 
   return (
-    <div style={{ height: '100vh' }}>
+    <div className="h-100vh relative" style={{ height: '100vh' }}>
       {location.loaded ? (
-        <MapContainer
-          center={[location.lat, location.lng]}
-          zoom={13}
-          style={{ height: '100%' }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <Marker position={[location.lat, location.lng]} icon={blueDotIcon}>
-            <Popup>
-              You are here! <br /> Latitude: {location.lat}, Longitude:{' '}
-              {location.lng}
-            </Popup>
-          </Marker>
-
-          {CLUES.map((clue, index) => (
-            <MarkerClue
-              key={index} // Add a unique key to each MarkerClue
-              currentLocation={location}
-              markerPosition={clue.markerPosition}
-              clue={clue.clue}
+        <>
+          <MapContainer
+            center={[location.lat, location.lng]}
+            zoom={13}
+            style={{ height: '100%' }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-          ))}
-        </MapContainer>
+            <Marker position={[location.lat, location.lng]} icon={blueDotIcon}>
+              <Popup>
+                <h3 className="font-bold mb-3">
+                  Your Score: {gameStatus[gameId]?.score || 0}
+                </h3>
+                <h3 className="font-bold">Your Position</h3>
+                Latitude: {parseFloat(`${location.lat}`).toFixed(2)} <br />
+                Longitude: {parseFloat(`${location.lng}`).toFixed(2)} <br />
+              </Popup>
+            </Marker>
+
+            {clues.map((clue, index) => (
+              <MarkerClue
+                key={index} // Add a unique key to each MarkerClue
+                gameId={gameId}
+                currentLocation={location}
+                clueId={clue.clueId}
+                markerPosition={clue.markerPosition}
+                question={clue.question}
+                answer={clue.answer}
+                answerReply={clue.answerReply}
+                clueCompleted={
+                  gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
+                }
+                points={clue.points}
+                handleUpdateScore={handleUpdateScore}
+              />
+            ))}
+          </MapContainer>
+        </>
       ) : (
         <p>Loading map...</p>
       )}
