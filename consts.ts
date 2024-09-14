@@ -2,6 +2,7 @@ import { TGameObject } from './types';
 
 export const LOCAL_STORAGE_KEY = 'geohunts';
 export const STRIPE_PAYMENT_COOKIE = 'stripe-cookie';
+export const COOKIE_EXPIRY_TIME = 60 * 60 * 24; // 1 day
 
 export const GAMES: TGameObject = {
   'pomeroy-street': {

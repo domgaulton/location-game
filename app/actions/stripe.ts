@@ -7,7 +7,7 @@ import { cookies, headers } from 'next/headers';
 import { CURRENCY } from '@/app/lib/stripe/config';
 import { formatAmountForStripe } from '@/app/lib/stripe/stripe-helpers';
 import { stripe } from '@/app/lib/stripe';
-import { STRIPE_PAYMENT_COOKIE } from '@/consts';
+import { COOKIE_EXPIRY_TIME, STRIPE_PAYMENT_COOKIE } from '@/consts';
 
 export async function createCheckoutSession(
   data: FormData
@@ -69,10 +69,8 @@ export async function createPaymentIntent(
   // SET A COOKIE
   const cookieStore = cookies();
 
-  // const THREE_HOURS = 60 * 60 * 3;
-  const THREE_HOURS = 60;
   cookieStore.set(STRIPE_PAYMENT_COOKIE, paymentIntent.id, {
-    maxAge: THREE_HOURS,
+    maxAge: COOKIE_EXPIRY_TIME,
   });
 
   return { client_secret: paymentIntent.client_secret as string };
