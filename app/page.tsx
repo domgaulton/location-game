@@ -3,11 +3,25 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+export async function generateMetadata() {
+  return {
+    title: `GeoHunt`,
+    description: 'Explore, Solve, and Compete in Fun Location-Based Games',
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: `/`,
+    },
+  };
+}
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-blue-50 text-gray-800">
       {/* Header Section */}
-      <header className="bg-blue-600 text-white py-12 text-center">
+      <header className="bg-blue-300 text-white py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">GeoHunt: Adventure Awaits!</h1>
         <p className="text-xl">
           Explore, Solve, and Compete in Fun Location-Based Games
