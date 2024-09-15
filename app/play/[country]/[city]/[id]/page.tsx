@@ -1,60 +1,60 @@
-import capitalise from '@/app/utils/capitalise';
-import { GAMES } from '@/consts';
-import { TGameData, TPageTemplate } from '@/types';
+import { startGameSession } from '@/app/auth/supabase/actions';
+import { createClient } from '@/app/lib/supabase/server';
+import { TPageTemplate } from '@/types';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
+
 const GameTemplate = dynamic(() => import('@/app/components/Game'), {
   ssr: false,
 });
 
-export async function generateMetadata({ params }: TPageTemplate) {
-  let gameData: TGameData = {
-    startingLocation: { lat: 0, lng: 0 },
-    clues: [],
-    name: '',
-    gameId: '',
-  };
-  try {
-    gameData = GAMES[params.id];
-  } catch (error) {
-    console.error(error);
+const PageTemplate = async ({ params }: TPageTemplate) => {
+  const supabase = createClient();
+
+  const { data: gamesData, error: gamesError } = await supabase
+    .from('games')
+    .select(
+      `id, 
+      name, 
+      description,
+      startingLocation ( lat, lng ),
+      game_clues ( id, question, answer, answerReply, points, 
+        position ( lat, lng ) 
+      )`
+    )
+    .eq('id', params.id);
+
+  if (!gamesData || gamesError) {
     notFound();
   }
 
-  const { country, city, id } = params;
-  return {
-    title: `Play ${gameData.name} in ${capitalise(city)}, ${capitalise(
-      country
-    )}`,
-    description: 'Play the game and find the hidden treasure!',
-    robots: {
-      index: true,
-      follow: true,
-    },
-    alternates: {
-      canonical: `/${country}/${city}/${id}/`,
-    },
+  const gameData = {
+    ...gamesData[0],
+    startingLocation:
+      gamesData[0].startingLocation[0] || gamesData[0].startingLocation, // issue with array type
+    game_clues: gamesData[0].game_clues.map((clue) => {
+      return {
+        ...clue,
+        clueId: clue.id,
+        position: clue.position[0] || clue.position, // issue with array type
+      };
+    }),
   };
-}
 
-const PageTemplate = ({ params }: TPageTemplate) => {
-  let gameData: TGameData = {
-    startingLocation: { lat: 0, lng: 0 },
-    clues: [],
-    name: '',
-    gameId: '',
-  };
-  try {
-    gameData = GAMES[params.id];
-  } catch (error) {
-    console.error(error);
-    notFound();
+  const { data: getUserData, error: getUserError } =
+    await supabase.auth.getUser();
+  // console.log({ getUserData, getUserError });
+
+  // only set game for logged in user
+  if (getUserData) {
+    await startGameSession(getUserData, gameData.id);
   }
+
   return (
     <GameTemplate
       startingLocation={gameData.startingLocation}
       gameId={params.id}
-      clues={gameData.clues}
+      game_clues={gameData.game_clues}
       name={gameData.name}
     />
   );

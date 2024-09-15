@@ -17,7 +17,7 @@ const MarkerClue = ({
   question,
   answer,
   answerReply,
-  markerPosition,
+  position,
   clueCompleted,
   points,
   handleUpdateScore,
@@ -27,7 +27,9 @@ const MarkerClue = ({
   const [submittedAnswer, setSubmittedAnswer] = useState<string>(
     clueCompleted ? answer : ''
   );
-  const [answerCorrect, setAnswerCorrect] = useState<boolean>(clueCompleted);
+  const [answerCorrect, setAnswerCorrect] = useState<boolean>(
+    clueCompleted || false
+  );
 
   const handleInputChange = (e: {
     target: { value: SetStateAction<string> };
@@ -71,7 +73,7 @@ const MarkerClue = ({
 
   useEffect(() => {
     const { lat: currentLat, lng: currentLng } = currentLocation;
-    const { lat: markerLat, lng: markerLng } = markerPosition;
+    const { lat: markerLat, lng: markerLng } = position;
 
     const minLat = markerLat - LOCATION_ACCURACY;
     const maxLat = markerLat + LOCATION_ACCURACY;
@@ -84,13 +86,10 @@ const MarkerClue = ({
     if (inBetweenLat && inBetweenLng) {
       setUserAtClue(true);
     }
-  }, [currentLocation, markerPosition]);
+  }, [currentLocation, position]);
 
   return (
-    <Marker
-      position={[markerPosition.lat, markerPosition.lng]}
-      icon={markerIcon}
-    >
+    <Marker position={[position.lat, position.lng]} icon={markerIcon}>
       <Popup>
         {userAtClue ? (
           <div>

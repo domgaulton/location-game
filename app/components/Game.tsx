@@ -17,7 +17,7 @@ Leaflet.Icon.Default.mergeOptions({
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
+const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [gameStatus, setGameStatus] = useState<TGameLocalStorage>({});
   const [location, setLocation] = useState({
@@ -142,13 +142,13 @@ const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
               </Popup>
             </Marker>
 
-            {clues.map((clue, index) => (
+            {game_clues.map((clue, index) => (
               <MarkerClue
                 key={index} // Add a unique key to each MarkerClue
                 gameId={gameId}
                 currentLocation={location}
                 clueId={clue.clueId}
-                markerPosition={clue.markerPosition}
+                position={clue.position}
                 question={clue.question}
                 answer={clue.answer}
                 answerReply={clue.answerReply}

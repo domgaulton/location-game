@@ -15,8 +15,8 @@ export type TMarkerClueData = {
   question: string;
   answer: string;
   answerReply?: string;
-  markerPosition: TLocation;
-  clueCompleted: boolean;
+  position: TLocation;
+  clueCompleted?: boolean;
   points: number;
 };
 
@@ -30,7 +30,7 @@ export type TGameData = {
   name: string;
   gameId: string;
   startingLocation: TLocation;
-  clues: TMarkerClueData[];
+  game_clues: TMarkerClueData[];
 };
 
 export type TGameObject = {
@@ -47,7 +47,7 @@ export type TMarkerClue = {
     | 'question'
     | 'answer'
     | 'answerReply'
-    | 'markerPosition'
+    | 'position'
     | 'clueCompleted'
     | 'points'
   >;
