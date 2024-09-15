@@ -13,6 +13,33 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   const supabase = createClient();
   const cookieStore = cookies();
 
+  // const { data: gamesData, error: gamesError } = await supabase
+  //   .from('games')
+  //   .select(
+  //     `id,
+  //     name,
+  //     description,
+  //     startingLocation ( lat, lng ),
+  //     game_clues ( id, question, answer, answerReply, points,
+  //       location ( lat, lng )
+  //     ),
+  //     game_session_clues_solved ( clue_id, game_session_id, solved )`
+  //   )
+  //   .eq('id', params.id);
+
+  const { country, city, id } = params;
+
+  const { data: getUserData } = await supabase.auth.getUser();
+  const cookie = cookieStore.get(UNIQUE_GUEST_COOKIE);
+
+  if (!cookie) {
+    if (!getUserData?.user) {
+      redirect(`/play/${country}/${city}/${id}/authenticate`);
+    } else {
+      redirect(`/play/${country}/${city}/${id}/create-game-session`);
+    }
+  }
+
   const { data: gamesData, error: gamesError } = await supabase
     .from('games')
     .select(
@@ -22,6 +49,9 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
       startingLocation ( lat, lng ),
       game_clues ( id, question, answer, answerReply, points, 
         location ( lat, lng ) 
+      ),
+      game_sessions ( id, game_id, user_id, created_at ,
+        game_session_clues_solved ( clue_id, game_session_id, solved )
       )`
     )
     .eq('id', params.id);
@@ -30,8 +60,12 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
     notFound();
   }
 
+  const thisGameSession = gamesData[0].game_sessions.find(
+    (session) => session.id == cookie.value
+  );
+
   const gameData = {
-    ...gamesData[0],
+    name: gamesData[0].name,
     startingLocation:
       gamesData[0].startingLocation[0] || gamesData[0].startingLocation, // issue with array type
     game_clues: gamesData[0].game_clues.map((clue) => {
@@ -39,26 +73,14 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
         ...clue,
         clueId: clue.id,
         location: clue.location[0] || clue.location, // issue with array type
+        solved:
+          thisGameSession?.game_session_clues_solved?.find(
+            (solvedClues) => solvedClues?.clue_id == clue?.id
+          )?.solved || false,
       };
     }),
   };
 
-  const { data: getUserData } = await supabase.auth.getUser();
-  const cookie = cookieStore.get(UNIQUE_GUEST_COOKIE);
-
-  // get users cookie
-
-  console.log({ getUserData, cookie });
-
-  const { country, city, id } = params;
-
-  if (!cookie) {
-    if (!getUserData?.user) {
-      redirect(`/play/${country}/${city}/${id}/authenticate`);
-    } else {
-      redirect(`/play/${country}/${city}/${id}/create-game-session`);
-    }
-  }
   return (
     <GameTemplate
       startingLocation={gameData.startingLocation}

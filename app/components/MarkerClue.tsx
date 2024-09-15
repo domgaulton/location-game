@@ -19,16 +19,14 @@ const MarkerClue = ({
   answer,
   answerReply,
   location,
-  clueCompleted = false,
+  solved,
   points,
   handleUpdateScore,
 }: TMarkerClue) => {
   const [userAtClue, setUserAtClue] = useState(false);
   const [userAnswer, setUserAnswer] = useState<string>('');
-  const [submittedAnswer, setSubmittedAnswer] = useState<string>(
-    clueCompleted ? answer : ''
-  );
-  const [answerCorrect, setAnswerCorrect] = useState<boolean>(clueCompleted);
+  const [submittedAnswer, setSubmittedAnswer] = useState<string>('');
+  const [answerCorrect, setAnswerCorrect] = useState<boolean>(false);
 
   const supabase = createClient();
 
@@ -40,8 +38,6 @@ const MarkerClue = ({
   };
 
   const uniqueGameSession = getCookie(UNIQUE_GUEST_COOKIE);
-
-  console.log({ clueId, clueCompleted, answerCorrect });
 
   const handleInputChange = (e: {
     target: { value: SetStateAction<string> };
@@ -66,13 +62,6 @@ const MarkerClue = ({
           game_session_id: uniqueGameSession,
           solved: true,
         });
-
-      console.log({ gameSessionUpdateData, gameSessionUpdateError });
-
-      localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify(handleUpdateGameScore({ gameId, clueId, points }))
-      );
 
       handleUpdateScore(points);
     }
@@ -108,6 +97,13 @@ const MarkerClue = ({
       setUserAtClue(true);
     }
   }, [currentLocation, location]);
+
+  useEffect(() => {
+    if (solved) {
+      setSubmittedAnswer(answer);
+      setAnswerCorrect(true);
+    }
+  }, [solved]);
 
   return (
     <Marker position={[location.lat, location.lng]} icon={markerIcon}>

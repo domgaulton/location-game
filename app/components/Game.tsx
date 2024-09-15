@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Leaflet from 'leaflet';
 import MarkerClue from './MarkerClue';
-import { TGameData, TGameLocalStorage } from '@/types';
+import { TGameData, TGameStatus } from '@/types';
 import { LOCAL_STORAGE_KEY, UNIQUE_GUEST_COOKIE } from '@/consts';
 import { createClient } from '../lib/supabase/client';
 
@@ -20,7 +20,15 @@ Leaflet.Icon.Default.mergeOptions({
 
 const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [gameStatus, setGameStatus] = useState<TGameLocalStorage>({});
+  // set state from game object
+  const [gameStatus, setGameStatus] = useState<TGameStatus>({
+    [gameId]: {
+      clueIds: game_clues
+        .filter((clue) => clue.solved)
+        .map((item) => item.clueId),
+      score: 0,
+    },
+  });
   const [location, setLocation] = useState({
     lat: startingLocation.lat,
     lng: startingLocation.lng,
@@ -38,7 +46,7 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
 
   const supabase = createClient();
 
-  const subscribe = supabase
+  supabase
     .channel('custom-all-channel')
     .on(
       'postgres_changes',
@@ -49,12 +57,7 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
         filter: `game_session_id=eq.${uniqueGameSession}`,
       },
       (payload) => {
-        // console.log('Change received!', payload);
-        // console.log('Game Status:', gameStatus);
-
-        const updateHasOccurred = payload.eventType === 'UPDATE';
         const updatedClue = payload.new;
-        console.log({ updatedClue });
 
         const updatedClueHasBeenSolved = (updatedClue as { solved: boolean })
           .solved;
@@ -62,21 +65,14 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
           gameId
         ]?.clueIds?.includes((updatedClue as { clue_id: string })?.clue_id);
 
-        // console.log({
-        //   updateHasOccurred,
-        //   updatedClue,
-        //   updatedClueHasBeenSolved,
-        //   gameStatusDoesNotContainClue,
-        // });
         if (
-          updateHasOccurred &&
           updatedClue &&
           updatedClueHasBeenSolved &&
           gameStatusDoesNotContainClue
         ) {
-          const duplicateGameStatus: TGameLocalStorage = { ...gameStatus };
+          const duplicateGameStatus: TGameStatus = { ...gameStatus };
 
-          const updatedGameData: TGameLocalStorage = {
+          const updatedGameData: TGameStatus = {
             ...duplicateGameStatus,
             [gameId]: {
               ...duplicateGameStatus[gameId],
@@ -88,19 +84,15 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
           };
 
           setGameStatus(updatedGameData);
-
-          // console.log({ updatedGameData });
         }
       }
     )
     .subscribe();
 
-  // console.log({ subscribe });
   const requestLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log('User location:', position.coords);
           setErrorMessage('');
         },
         (error) => {
@@ -138,13 +130,13 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
   });
 
   const handleUpdateScore = (points: number) => {
-    const duplicateGameStatus: TGameLocalStorage = { ...gameStatus };
+    const duplicateGameStatus: TGameStatus = { ...gameStatus };
 
     const updatedScore = duplicateGameStatus[gameId]?.score
       ? duplicateGameStatus[gameId]?.score + points
       : points;
 
-    const updatedGameData: TGameLocalStorage = {
+    const updatedGameData: TGameStatus = {
       ...duplicateGameStatus,
       [gameId]: {
         ...duplicateGameStatus[gameId],
@@ -156,19 +148,6 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
   };
 
   useEffect(() => {
-    let previousGameStatus: TGameLocalStorage = {};
-
-    try {
-      previousGameStatus = JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'
-      );
-      if (Object.keys(previousGameStatus).length) {
-        setGameStatus(previousGameStatus);
-      }
-    } catch (err) {
-      console.error('Error parsing local storage data');
-    }
-
     if ('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
         (position) => {
@@ -212,34 +191,23 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
               </Popup>
             </Marker>
 
-            {game_clues.map(
-              (clue, index) => (
-                console.log('this clue id', clue.clueId),
-                console.log('clueIds', gameStatus[gameId]?.clueIds),
-                console.log(
-                  'clueId Found',
-                  gameStatus[gameId]?.clueIds?.includes(clue.clueId)
-                ),
-                (
-                  <MarkerClue
-                    key={index} // Add a unique key to each MarkerClue
-                    gameId={gameId}
-                    currentLocation={location}
-                    clueId={clue.clueId}
-                    location={clue.location}
-                    question={clue.question}
-                    answer={clue.answer}
-                    answerReply={clue.answerReply}
-                    clueCompleted={
-                      gameStatus[gameId]?.clueIds?.includes(clue.clueId) ||
-                      false
-                    }
-                    points={clue.points}
-                    handleUpdateScore={handleUpdateScore}
-                  />
-                )
-              )
-            )}
+            {game_clues.map((clue, index) => (
+              <MarkerClue
+                key={index} // Add a unique key to each MarkerClue
+                gameId={gameId}
+                currentLocation={location}
+                clueId={clue.clueId}
+                location={clue.location}
+                question={clue.question}
+                answer={clue.answer}
+                answerReply={clue.answerReply}
+                solved={
+                  gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
+                }
+                points={clue.points}
+                handleUpdateScore={handleUpdateScore}
+              />
+            ))}
           </MapContainer>
         </>
       ) : (

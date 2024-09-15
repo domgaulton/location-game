@@ -19,8 +19,6 @@ export default function LoginPage() {
 
   const uniqueGameSession = getCookie(UNIQUE_GUEST_COOKIE);
 
-  console.log({ uniqueGameSession });
-
   if (uniqueGameSession) {
     redirect(updatedUrl);
   }

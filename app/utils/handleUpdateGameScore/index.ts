@@ -1,5 +1,5 @@
 import { LOCAL_STORAGE_KEY } from '@/consts';
-import { TGameLocalStorage } from '@/types';
+import { TGameStatus } from '@/types';
 
 const handleUpdateGameScore = ({
   gameId,
@@ -10,13 +10,13 @@ const handleUpdateGameScore = ({
   clueId: string;
   points: number;
 }) => {
-  let currentGameData: TGameLocalStorage = {};
+  let currentGameData: TGameStatus = {};
   try {
     currentGameData = JSON.parse(
       localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'
     );
 
-    let updatedGameData: TGameLocalStorage = {};
+    let updatedGameData: TGameStatus = {};
     if (Object.keys(currentGameData).length) {
       const currentClueIds = currentGameData[gameId].clueIds || [];
       const currentScore = currentGameData[gameId].score || 0;

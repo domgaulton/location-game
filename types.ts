@@ -16,7 +16,7 @@ export type TMarkerClueData = {
   answer: string;
   answerReply?: string;
   location: TLocation;
-  clueCompleted?: boolean;
+  solved?: boolean;
   points: number;
 };
 
@@ -48,11 +48,11 @@ export type TMarkerClue = {
     | 'answer'
     | 'answerReply'
     | 'location'
-    | 'clueCompleted'
+    | 'solved'
     | 'points'
   >;
 
-export type TGameLocalStorage = {
+export type TGameStatus = {
   [key: string]: {
     clueIds?: string[];
     score: number;

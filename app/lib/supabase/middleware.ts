@@ -38,16 +38,10 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // console.log({ request });
-
   const hasUniqueCookie = request.cookies.has(UNIQUE_GUEST_COOKIE);
 
-  console.log({ hasUniqueCookie });
-  // console.log({ hasUniqueCookie });
   if (
     !user &&
-    // !request.nextUrl.pathname.startsWith('/authenticate') &&
-    // !request.nextUrl.pathname.startsWith('/auth')
     request.nextUrl.pathname.startsWith('/play/') &&
     !request.nextUrl.pathname.endsWith('/authenticate') &&
     !request.nextUrl.pathname.endsWith('/explore') &&
@@ -57,7 +51,6 @@ export async function updateSession(request: NextRequest) {
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
-    // console.log(url.pathname);
     url.pathname = `${url.pathname}/authenticate`;
     return NextResponse.redirect(url);
   }
