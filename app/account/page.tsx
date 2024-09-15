@@ -16,7 +16,7 @@ const Account = async () => {
       Logged in as {data.user.email}
       <form className="flex flex-col mt-4">
         <button
-          className="bg-blue-200 p-3 hover:bg-blue-300"
+          className="bg-yellow-400 p-3 hover:bg-yellow-600"
           formAction={signOut}
         >
           Sign out

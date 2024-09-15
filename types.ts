@@ -28,6 +28,7 @@ export type TGameMetaData = {
 
 export type TGameData = {
   name: string;
+  overview?: string;
   gameId: string;
   startingLocation: TLocation;
   game_clues: TMarkerClueData[];

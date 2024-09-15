@@ -3,6 +3,7 @@ import capitalise from '@/app/utils/capitalise';
 import { TGameData, TPageTemplate } from '@/types';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 export async function generateMetadata({ params }: TPageTemplate) {
   const supabase = createClient();
@@ -37,7 +38,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
 
   const { data: gamesData } = await supabase
     .from('games')
-    .select('name')
+    .select('name, overview')
     .eq('id', params.id); // Correct;
 
   if (!gamesData) {
@@ -45,15 +46,17 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   }
 
   const gameData = gamesData[0] as TGameData;
+
   return (
     <div className="flex flex-col container py-8 mx-auto text-center">
-      Play {gameData.name} now
+      <h2 className="text-2xl">Play {gameData.name}</h2>
       <Link
-        className="bg-blue-200 my-4 p-3 hover:bg-blue-300 inline-block"
+        className="bg-yellow-400 my-4 p-3 hover:bg-yellow-600 inline-block"
         href={`/play/${params.country}/${params.city}/${params.id}/play/`}
       >
         Click Here To Play
       </Link>
+      <ReactMarkdown>{gameData.overview}</ReactMarkdown>
     </div>
   );
 };

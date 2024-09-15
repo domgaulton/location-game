@@ -58,7 +58,7 @@ export default function LoginPage() {
             />
 
             <button
-              className="bg-blue-200 mt-8 p-3 hover:bg-blue-300"
+              className="bg-yellow-400 mt-8 p-3 hover:bg-yellow-600"
               formAction={(e) => login(e, updatedUrl)}
             >
               Log In
@@ -79,7 +79,7 @@ export default function LoginPage() {
             />
 
             <button
-              className="bg-blue-200 mt-8 p-3 hover:bg-blue-300"
+              className="bg-yellow-400 mt-8 p-3 hover:bg-yellow-600"
               formAction={(e) => signUp(e, updatedUrl)}
             >
               Create Account
@@ -99,7 +99,7 @@ export default function LoginPage() {
             />
 
             <button
-              className="bg-blue-200 mt-8 p-3 hover:bg-blue-300"
+              className="bg-yellow-400 mt-8 p-3 hover:bg-yellow-600"
               formAction={(e) => joinGame(e, gameId as string, updatedUrl)}
             >
               Join Game
