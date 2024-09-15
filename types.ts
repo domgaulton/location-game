@@ -33,10 +33,6 @@ export type TGameData = {
   game_clues: TMarkerClueData[];
 };
 
-export type TGameObject = {
-  [key: string]: TGameData & TGameMetaData;
-};
-
 export type TMarkerClue = {
   currentLocation: TLocation;
   handleUpdateScore: (points: number) => void;

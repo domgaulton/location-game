@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { COOKIE_EXPIRE_TIME, UNIQUE_GUEST_COOKIE } from '@/consts';
-import { User } from '@supabase/supabase-js';
 
 export async function signOut() {
   const supabase = createClient();
@@ -61,12 +60,16 @@ export async function signUp(formData: FormData, urlToRedirectTo: string) {
     redirect('/error');
   }
 
-  const { data: insertData, error: insertError } = await supabase
+  const { data: userInsertData, error: userInsertError } = await supabase
     .from('users')
     .insert({
       user_id: signUpData.user ? signUpData.user.id : '',
       email: signUpData.user ? signUpData.user.email : '',
     });
+
+  if (!userInsertData || userInsertError) {
+    redirect('/error');
+  }
 
   revalidatePath(urlToRedirectTo, 'layout');
   redirect(urlToRedirectTo);
@@ -85,6 +88,9 @@ export async function startGameSession(
 
   const { data: userData, error: userError } = await supabase.auth.getUser();
 
+  if (!userData || userError) {
+    redirect('/error');
+  }
   const { data: gameSessionData, error: gameSessionError } = await supabase
     .from('game_sessions')
     .insert({
@@ -128,7 +134,7 @@ export async function joinGame(
     .eq('email', formData.get('email') as string)
     .eq('unique_key', formData.get('unique_key') as string);
 
-  if (gameSessionData?.length) {
+  if (gameSessionData?.length && !gameSessionError) {
     const createdAtDate = new Date(gameSessionData[0].created_at);
     const currentTime = new Date();
 

@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import Leaflet from 'leaflet';
 import MarkerClue from './MarkerClue';
 import { TGameData, TGameStatus } from '@/types';
-import { LOCAL_STORAGE_KEY, UNIQUE_GUEST_COOKIE } from '@/consts';
+import { UNIQUE_GUEST_COOKIE } from '@/consts';
 import { createClient } from '../lib/supabase/client';
 
 Leaflet.Icon.Default.mergeOptions({
@@ -92,7 +92,7 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
   const requestLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        () => {
           setErrorMessage('');
         },
         (error) => {

@@ -1,18 +1,16 @@
 'use client';
 
-import { LOCAL_STORAGE_KEY, UNIQUE_GUEST_COOKIE } from '@/consts';
+import { UNIQUE_GUEST_COOKIE } from '@/consts';
 import { TMarkerClue } from '@/types';
 import Leaflet from 'leaflet';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
-import handleUpdateGameScore from '../utils/handleUpdateGameScore';
 import stringSimilarity from '../utils/stringSimilarity';
 import { createClient } from '../lib/supabase/client';
 
 const LOCATION_ACCURACY = 0.1;
 
 const MarkerClue = ({
-  gameId,
   clueId,
   currentLocation,
   question,
@@ -56,12 +54,12 @@ const MarkerClue = ({
     if (stringSimilarity(userAnswer, answer) > 0.7) {
       setAnswerCorrect(true);
 
-      const { data: gameSessionUpdateData, error: gameSessionUpdateError } =
-        await supabase.from('game_session_clues_solved').insert({
-          clue_id: clueId,
-          game_session_id: uniqueGameSession,
-          solved: true,
-        });
+      // Update database
+      await supabase.from('game_session_clues_solved').insert({
+        clue_id: clueId,
+        game_session_id: uniqueGameSession,
+        solved: true,
+      });
 
       handleUpdateScore(points);
     }
