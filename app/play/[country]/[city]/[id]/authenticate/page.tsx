@@ -13,24 +13,40 @@ export default function LoginPage() {
 
   const updatedUrl = currentUrl.replace('/authenticate', '/play');
   return (
-    <div className="flex flex-col container py-8 mx-auto">
+    <div className="flex flex-col container py-8 max-w-128 mx-auto">
       <button onClick={() => setSignUpType('login')}>Login</button>
       <button onClick={() => setSignUpType('signUp')}>Sign Up</button>
       <button onClick={() => setSignUpType('joinGame')}>Join Game</button>
-      <h1 className="text-2xl font-bold mb-8">
-        Log In or Create an account to play
-      </h1>
+
+      {signUpType === 'login' && (
+        <h1 className="text-2xl font-bold mb-8">Log in to start</h1>
+      )}
+
+      {signUpType === 'signUp' && (
+        <h1 className="text-2xl font-bold mb-8">Sign up to start playing</h1>
+      )}
+
+      {signUpType === 'joinGame' && (
+        <h1 className="text-2xl font-bold mb-8">Use friends details to play</h1>
+      )}
+
       <form className="flex flex-col">
+        <label htmlFor="email">
+          {signUpType === 'login' || signUpType === 'signUp'
+            ? 'Your'
+            : 'Your Friends'}{' '}
+          Email:
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          className="border p-3"
+          required
+        />
+
         {signUpType === 'login' && (
           <>
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className="border p-3"
-              required
-            />
             <label htmlFor="password">Password:</label>
             <input
               id="password"
@@ -42,7 +58,7 @@ export default function LoginPage() {
             />
 
             <button
-              className="bg-blue-200 my-2 p-3 hover:bg-blue-300"
+              className="bg-blue-200 mt-8 p-3 hover:bg-blue-300"
               formAction={(e) => login(e, updatedUrl)}
             >
               Log In
@@ -52,15 +68,7 @@ export default function LoginPage() {
 
         {signUpType === 'signUp' && (
           <>
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className="border p-3"
-              required
-            />
-            <label htmlFor="password">Password:</label>
+            <label htmlFor="password">Create Password:</label>
             <input
               id="password"
               name="password"
@@ -71,7 +79,7 @@ export default function LoginPage() {
             />
 
             <button
-              className="bg-blue-200 my-2 p-3 hover:bg-blue-300"
+              className="bg-blue-200 mt-8 p-3 hover:bg-blue-300"
               formAction={(e) => signUp(e, updatedUrl)}
             >
               Create Account
@@ -81,15 +89,7 @@ export default function LoginPage() {
 
         {signUpType === 'joinGame' && (
           <>
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className="border p-3"
-              required
-            />
-            <label htmlFor="unique_key">Join Game Code:</label>
+            <label htmlFor="unique_key">Your Friends Secret Code:</label>
             <input
               id="unique_key"
               name="unique_key"
@@ -99,7 +99,7 @@ export default function LoginPage() {
             />
 
             <button
-              className="bg-blue-200 my-2 p-3 hover:bg-blue-300"
+              className="bg-blue-200 mt-8 p-3 hover:bg-blue-300"
               formAction={(e) => joinGame(e, gameId as string, updatedUrl)}
             >
               Join Game

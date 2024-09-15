@@ -13,20 +13,6 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   const supabase = createClient();
   const cookieStore = cookies();
 
-  // const { data: gamesData, error: gamesError } = await supabase
-  //   .from('games')
-  //   .select(
-  //     `id,
-  //     name,
-  //     description,
-  //     startingLocation ( lat, lng ),
-  //     game_clues ( id, question, answer, answerReply, points,
-  //       location ( lat, lng )
-  //     ),
-  //     game_session_clues_solved ( clue_id, game_session_id, solved )`
-  //   )
-  //   .eq('id', params.id);
-
   const { country, city, id } = params;
 
   const { data: getUserData } = await supabase.auth.getUser();

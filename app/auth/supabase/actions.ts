@@ -60,14 +60,19 @@ export async function signUp(formData: FormData, urlToRedirectTo: string) {
     redirect('/error');
   }
 
-  const { data: userInsertData, error: userInsertError } = await supabase
-    .from('users')
-    .insert({
-      user_id: signUpData.user ? signUpData.user.id : '',
-      email: signUpData.user ? signUpData.user.email : '',
-    });
+  const { error: userInsertError } = await supabase.from('users').insert({
+    user_id: signUpData.user ? signUpData.user.id : '',
+    email: signUpData.user ? signUpData.user.email : '',
+  });
+  // TO CHECK - WHEN GETTING DATA BASE FROM INSERT ROW I HAVE A ROW VIOLATE
+  // userInsertError: {
+  //   code: '42501',
+  //   details: null,
+  //   hint: null,
+  //   message: 'new row violates row-level security policy for table "users"'
+  // }
 
-  if (!userInsertData || userInsertError) {
+  if (userInsertError) {
     redirect('/error');
   }
 
