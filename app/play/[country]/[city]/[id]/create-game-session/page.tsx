@@ -34,8 +34,8 @@ export default function LoginPage() {
       <p>We can see you are logged in and can start this game</p>
       <p>
         You will have two hours to start the game. If you want to play with
-        friends, enter a key here and share it with them. (You can't change this
-        later)
+        friends, enter a key here and share it with them. (You can&apos;t change
+        this later)
       </p>
       <form className="flex flex-col mt-8">
         <>
@@ -57,7 +57,7 @@ export default function LoginPage() {
         </>
       </form>
 
-      <p>Don't want to start the game just yet?</p>
+      <p>Don&apos;t want to start the game just yet?</p>
       <Link
         className="bg-blue-300 hover:bg-blue-400 p-4 my-4"
         href={redirectUrlToExplore}

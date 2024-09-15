@@ -96,6 +96,7 @@ const MarkerClue = ({
     }
   }, [currentLocation, location]);
 
+  // TO CHECK IF WE NEED THIS
   useEffect(() => {
     if (solved) {
       setSubmittedAnswer(answer);
