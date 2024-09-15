@@ -1,8 +1,9 @@
-import { startGameSession } from '@/app/auth/supabase/actions';
 import { createClient } from '@/app/lib/supabase/server';
 import { TPageTemplate } from '@/types';
 import dynamic from 'next/dynamic';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { UNIQUE_GUEST_COOKIE } from '@/consts';
 
 const GameTemplate = dynamic(() => import('@/app/components/Game'), {
   ssr: false,
@@ -10,6 +11,7 @@ const GameTemplate = dynamic(() => import('@/app/components/Game'), {
 
 const PageTemplate = async ({ params }: TPageTemplate) => {
   const supabase = createClient();
+  const cookieStore = cookies();
 
   const { data: gamesData, error: gamesError } = await supabase
     .from('games')
@@ -19,7 +21,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
       description,
       startingLocation ( lat, lng ),
       game_clues ( id, question, answer, answerReply, points, 
-        position ( lat, lng ) 
+        location ( lat, lng ) 
       )`
     )
     .eq('id', params.id);
@@ -36,22 +38,27 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
       return {
         ...clue,
         clueId: clue.id,
-        position: clue.position[0] || clue.position, // issue with array type
+        location: clue.location[0] || clue.location, // issue with array type
       };
     }),
   };
 
-  const { data: getUserData, error: getUserError } =
-    await supabase.auth.getUser();
-  // console.log({ getUserData, getUserError });
+  const { data: getUserData } = await supabase.auth.getUser();
+  const cookie = cookieStore.get(UNIQUE_GUEST_COOKIE);
 
-  // only set game for logged in user
-  if (getUserData.user) {
-    await startGameSession(getUserData, gameData.id);
+  // get users cookie
+
+  console.log({ getUserData, cookie });
+
+  const { country, city, id } = params;
+
+  if (!cookie) {
+    if (!getUserData?.user) {
+      redirect(`/play/${country}/${city}/${id}/authenticate`);
+    } else {
+      redirect(`/play/${country}/${city}/${id}/create-game-session`);
+    }
   }
-
-  console.error(getUserError);
-
   return (
     <GameTemplate
       startingLocation={gameData.startingLocation}

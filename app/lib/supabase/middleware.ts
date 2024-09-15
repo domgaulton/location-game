@@ -41,20 +41,24 @@ export async function updateSession(request: NextRequest) {
   // console.log({ request });
 
   const hasUniqueCookie = request.cookies.has(UNIQUE_GUEST_COOKIE);
+
+  console.log({ hasUniqueCookie });
   // console.log({ hasUniqueCookie });
   if (
     !user &&
-    // !request.nextUrl.pathname.startsWith('/login') &&
+    // !request.nextUrl.pathname.startsWith('/authenticate') &&
     // !request.nextUrl.pathname.startsWith('/auth')
-    request.nextUrl.pathname.includes('/play/') &&
-    !request.nextUrl.pathname.endsWith('/login') &&
+    request.nextUrl.pathname.startsWith('/play/') &&
+    !request.nextUrl.pathname.endsWith('/authenticate') &&
     !request.nextUrl.pathname.endsWith('/explore') &&
+    !request.nextUrl.pathname.endsWith('/play') &&
+    !request.nextUrl.pathname.endsWith('/create-game-session') &&
     !hasUniqueCookie
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     // console.log(url.pathname);
-    url.pathname = `${url.pathname}/login`;
+    url.pathname = `${url.pathname}/authenticate`;
     return NextResponse.redirect(url);
   }
 

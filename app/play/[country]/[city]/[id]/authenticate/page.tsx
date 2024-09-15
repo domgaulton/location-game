@@ -1,6 +1,6 @@
 'use client';
 import { joinGame, login, signUp } from '@/app/auth/supabase/actions';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 type SignUpType = 'login' | 'signUp' | 'joinGame';
@@ -8,7 +8,10 @@ type SignUpType = 'login' | 'signUp' | 'joinGame';
 export default function LoginPage() {
   const [signUpType, setSignUpType] = useState<SignUpType>('login');
   const currentUrl = usePathname();
-  const updatedUrl = currentUrl.replace('/login', '');
+  const urlParms = useParams();
+  const { id: gameId } = urlParms;
+
+  const updatedUrl = currentUrl.replace('/authenticate', '/play');
   return (
     <div className="flex flex-col container py-8 mx-auto">
       <button onClick={() => setSignUpType('login')}>Login</button>
@@ -86,18 +89,18 @@ export default function LoginPage() {
               className="border p-3"
               required
             />
-            <label htmlFor="code">Join Game Code:</label>
+            <label htmlFor="unique_key">Join Game Code:</label>
             <input
-              id="code"
-              name="code"
-              type="code"
+              id="unique_key"
+              name="unique_key"
+              type="unique_key"
               className="border p-3"
               required
             />
 
             <button
               className="bg-blue-200 my-2 p-3 hover:bg-blue-300"
-              formAction={(e) => joinGame(e, updatedUrl)}
+              formAction={(e) => joinGame(e, gameId as string, updatedUrl)}
             >
               Join Game
             </button>

@@ -6,7 +6,6 @@ const Account = async () => {
   const supabase = createClient();
 
   const { data, error } = await supabase.auth.getUser();
-  console.log({ data, error });
 
   if (!data || error) {
     redirect('/');

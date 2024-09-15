@@ -15,7 +15,7 @@ export type TMarkerClueData = {
   question: string;
   answer: string;
   answerReply?: string;
-  position: TLocation;
+  location: TLocation;
   clueCompleted?: boolean;
   points: number;
 };
@@ -47,7 +47,7 @@ export type TMarkerClue = {
     | 'question'
     | 'answer'
     | 'answerReply'
-    | 'position'
+    | 'location'
     | 'clueCompleted'
     | 'points'
   >;

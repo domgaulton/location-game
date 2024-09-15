@@ -50,7 +50,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
       Play {gameData.name} now
       <Link
         className="bg-blue-200 my-4 p-3 hover:bg-blue-300 inline-block"
-        href={`/play/${params.country}/${params.city}/${params.id}/`}
+        href={`/play/${params.country}/${params.city}/${params.id}/play/`}
       >
         Click Here To Play
       </Link>

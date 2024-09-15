@@ -1,14 +1,15 @@
 'use client';
 
-import { LOCAL_STORAGE_KEY } from '@/consts';
+import { LOCAL_STORAGE_KEY, UNIQUE_GUEST_COOKIE } from '@/consts';
 import { TMarkerClue } from '@/types';
 import Leaflet from 'leaflet';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import handleUpdateGameScore from '../utils/handleUpdateGameScore';
 import stringSimilarity from '../utils/stringSimilarity';
+import { createClient } from '../lib/supabase/client';
 
-const LOCATION_ACCURACY = 0.001;
+const LOCATION_ACCURACY = 0.1;
 
 const MarkerClue = ({
   gameId,
@@ -17,8 +18,8 @@ const MarkerClue = ({
   question,
   answer,
   answerReply,
-  position,
-  clueCompleted,
+  location,
+  clueCompleted = false,
   points,
   handleUpdateScore,
 }: TMarkerClue) => {
@@ -27,9 +28,20 @@ const MarkerClue = ({
   const [submittedAnswer, setSubmittedAnswer] = useState<string>(
     clueCompleted ? answer : ''
   );
-  const [answerCorrect, setAnswerCorrect] = useState<boolean>(
-    clueCompleted || false
-  );
+  const [answerCorrect, setAnswerCorrect] = useState<boolean>(clueCompleted);
+
+  const supabase = createClient();
+
+  const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (!parts || !parts.length) return '';
+    if (parts.length === 2) return parts.pop()?.split(';')?.shift();
+  };
+
+  const uniqueGameSession = getCookie(UNIQUE_GUEST_COOKIE);
+
+  console.log({ clueId, clueCompleted, answerCorrect });
 
   const handleInputChange = (e: {
     target: { value: SetStateAction<string> };
@@ -42,11 +54,20 @@ const MarkerClue = ({
     setSubmittedAnswer('');
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSubmittedAnswer(userAnswer);
     if (stringSimilarity(userAnswer, answer) > 0.7) {
       setAnswerCorrect(true);
+
+      const { data: gameSessionUpdateData, error: gameSessionUpdateError } =
+        await supabase.from('game_session_clues_solved').insert({
+          clue_id: clueId,
+          game_session_id: uniqueGameSession,
+          solved: true,
+        });
+
+      console.log({ gameSessionUpdateData, gameSessionUpdateError });
 
       localStorage.setItem(
         LOCAL_STORAGE_KEY,
@@ -73,7 +94,7 @@ const MarkerClue = ({
 
   useEffect(() => {
     const { lat: currentLat, lng: currentLng } = currentLocation;
-    const { lat: markerLat, lng: markerLng } = position;
+    const { lat: markerLat, lng: markerLng } = location;
 
     const minLat = markerLat - LOCATION_ACCURACY;
     const maxLat = markerLat + LOCATION_ACCURACY;
@@ -86,10 +107,10 @@ const MarkerClue = ({
     if (inBetweenLat && inBetweenLng) {
       setUserAtClue(true);
     }
-  }, [currentLocation, position]);
+  }, [currentLocation, location]);
 
   return (
-    <Marker position={[position.lat, position.lng]} icon={markerIcon}>
+    <Marker position={[location.lat, location.lng]} icon={markerIcon}>
       <Popup>
         {userAtClue ? (
           <div>

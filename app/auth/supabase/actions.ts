@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/server';
 import { cookies } from 'next/headers';
-import { UNIQUE_GUEST_COOKIE } from '@/consts';
+import { COOKIE_EXPIRE_TIME, UNIQUE_GUEST_COOKIE } from '@/consts';
 import { User } from '@supabase/supabase-js';
 
 export async function signOut() {
@@ -15,6 +15,9 @@ export async function signOut() {
   if (error) {
     redirect('/error');
   }
+
+  // delete the cookie
+  cookies().delete(UNIQUE_GUEST_COOKIE);
 
   revalidatePath('/', 'layout');
   redirect('/');
@@ -58,8 +61,6 @@ export async function signUp(formData: FormData, urlToRedirectTo: string) {
     redirect('/error');
   }
 
-  console.log({ signUpData });
-
   const { data: insertData, error: insertError } = await supabase
     .from('users')
     .insert({
@@ -67,74 +68,99 @@ export async function signUp(formData: FormData, urlToRedirectTo: string) {
       email: signUpData.user ? signUpData.user.email : '',
     });
 
-  console.log({ insertData, insertError });
   revalidatePath(urlToRedirectTo, 'layout');
   redirect(urlToRedirectTo);
 }
 
 export async function startGameSession(
-  userData: { user: User },
-  gameId: string
+  formData: FormData,
+  gameId: string,
+  urlToRedirectTo: string
 ) {
+  const existingCookie = cookies().get(UNIQUE_GUEST_COOKIE);
+
+  if (existingCookie) return;
+
   const supabase = createClient();
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
 
   const { data: gameSessionData, error: gameSessionError } = await supabase
     .from('game_sessions')
     .insert({
       user_id: userData.user ? userData.user.id : '',
       game_id: gameId,
-    });
+      email: userData.user ? userData.user.email : '',
+      unique_key: formData.get('unique_key') as string,
+    })
+    .select('id');
 
-  console.log({ gameSessionData, gameSessionError });
+  if (!gameSessionError && gameSessionData && gameSessionData[0].id) {
+    const cookieExpiry = new Date(new Date().getTime() + COOKIE_EXPIRE_TIME);
+
+    cookies().set(UNIQUE_GUEST_COOKIE, gameSessionData[0].id, {
+      secure: true,
+      expires: cookieExpiry,
+    });
+  }
+
+  revalidatePath(urlToRedirectTo, 'layout');
+  redirect(urlToRedirectTo);
 }
 
-export async function joinGame(formData: FormData, urlToRedirectTo: string) {
+export async function joinGame(
+  formData: FormData,
+  gameIdFromUrl: string,
+  urlToRedirectTo: string
+) {
   const supabase = createClient();
 
   const { data: gameSessionData, error: gameSessionError } = await supabase
     .from('game_sessions')
     .select(
-      `game_id, 
+      `id,
+      game_id, 
       email,
-      created_at
+      created_at,
+      unique_key
       `
     )
-    .eq('email', formData.get('email') as string);
-
-  console.log({ gameSessionData, gameSessionError });
+    .eq('email', formData.get('email') as string)
+    .eq('unique_key', formData.get('unique_key') as string);
 
   if (gameSessionData?.length) {
     const createdAtDate = new Date(gameSessionData[0].created_at);
     const currentTime = new Date();
 
-    // Calculate the time difference in milliseconds (2 hours = 2 * 60 * 60 * 1000)
-    const twoHoursAgo = new Date(currentTime.getTime() - 2 * 60 * 60 * 1000);
+    const withinInExpiration = new Date(
+      currentTime.getTime() - COOKIE_EXPIRE_TIME
+    );
 
     // Check if the timestamp is within the last two hours
+    const gameSessionCreatedInPastTwoHours =
+      createdAtDate >= withinInExpiration;
+    const gameSessionCreatedInThePast = createdAtDate <= currentTime;
     const isInLastTwoHours =
-      createdAtDate >= twoHoursAgo && createdAtDate <= currentTime;
+      gameSessionCreatedInPastTwoHours && gameSessionCreatedInThePast;
 
-    // Check user is on the right game board
+    // Check user is on the right game board e.g. can't log into any random game
     const gameId = gameSessionData[0].game_id;
-    const gameIdFromUrl = urlToRedirectTo.split('/').pop();
+    const gameIdMatches = gameId === Number(gameIdFromUrl);
 
-    const gameIdMatches = gameId === gameIdFromUrl;
+    const gameSessionId = gameSessionData[0].id;
 
     if (isInLastTwoHours && gameIdMatches) {
-      cookies().set(UNIQUE_GUEST_COOKIE, gameId, {
+      const expirationFromGameSessionTime = new Date(
+        createdAtDate.getTime() + COOKIE_EXPIRE_TIME
+      );
+
+      cookies().set(UNIQUE_GUEST_COOKIE, gameSessionId, {
         secure: true,
+        expires: expirationFromGameSessionTime,
       });
+
+      revalidatePath(urlToRedirectTo, 'layout');
+      redirect(urlToRedirectTo);
     }
   }
-
-  redirect(urlToRedirectTo);
-
-  // const { data: gameSessionData, error: gameSessionError } = await supabase
-  //   .from('game_sessions')
-  //   .insert({
-  //     user_id: userData.user ? userData.user.id : '',
-  //     game_id: gameId,
-  //   });
-
-  // console.log({ gameSessionData, gameSessionError });
 }
