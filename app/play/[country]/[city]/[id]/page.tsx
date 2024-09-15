@@ -46,9 +46,11 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   // console.log({ getUserData, getUserError });
 
   // only set game for logged in user
-  if (getUserData) {
+  if (getUserData.user) {
     await startGameSession(getUserData, gameData.id);
   }
+
+  console.error(getUserError);
 
   return (
     <GameTemplate

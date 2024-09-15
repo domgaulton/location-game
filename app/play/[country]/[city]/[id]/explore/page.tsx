@@ -1,8 +1,6 @@
 import { createClient } from '@/app/lib/supabase/server';
 import capitalise from '@/app/utils/capitalise';
-import { GAMES } from '@/consts';
 import { TGameData, TPageTemplate } from '@/types';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

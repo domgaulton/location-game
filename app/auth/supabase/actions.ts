@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { UNIQUE_GUEST_COOKIE } from '@/consts';
+import { User } from '@supabase/supabase-js';
 
 export async function signOut() {
   const supabase = createClient();
@@ -71,7 +72,10 @@ export async function signUp(formData: FormData, urlToRedirectTo: string) {
   redirect(urlToRedirectTo);
 }
 
-export async function startGameSession(userData: any, gameId: string) {
+export async function startGameSession(
+  userData: { user: User },
+  gameId: string
+) {
   const supabase = createClient();
 
   const { data: gameSessionData, error: gameSessionError } = await supabase
