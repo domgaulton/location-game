@@ -110,7 +110,7 @@ export default function LoginPage() {
         </>
       ) : (
         <CheckoutForm
-          priceId={process.env.EXAMPLE_PRICE_ID!}
+          priceId={process.env.NEXT_PUBLIC_EXAMPLE_PRICE_ID!}
           returnUrl={redirectUrlPaymentSuccess}
         />
       )}
