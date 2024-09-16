@@ -15,7 +15,7 @@ export const postStripeSession = async ({
   priceId,
   returnUrl,
 }: NewSessionOptions) => {
-  const returnUrlParams = `https://location-game.vercel.app${returnUrl}/checkout-return/?session_id={CHECKOUT_SESSION_ID}`;
+  const returnUrlParams = `${returnUrl}/checkout-return/?session_id={CHECKOUT_SESSION_ID}`;
 
   const session = await stripe.checkout.sessions.create({
     ui_mode: 'embedded',
