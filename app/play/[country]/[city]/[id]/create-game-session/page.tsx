@@ -67,11 +67,16 @@ export default function LoginPage() {
     <div className="flex flex-col container py-8 mx-auto max-w-128">
       <h1 className="text-2xl font-bold mb-8">Start Game</h1>
       <p>We can see you are logged in and can start this game</p>
-      <h2 className="text-2xl font-bold mb-8 text-red-500">
-        {hasCredits
-          ? 'You have credits to play this game'
-          : 'You need credits to play this game'}
-      </h2>
+
+      {hasCredits ? (
+        <h2 className="text-2xl font-bold mb-8 text-green-500">
+          You have credits to play this game
+        </h2>
+      ) : (
+        <h2 className="text-2xl font-bold mb-8 text-red-500">
+          You need credits to play this game
+        </h2>
+      )}
 
       {hasCredits ? (
         <>

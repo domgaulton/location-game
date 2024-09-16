@@ -57,7 +57,7 @@ export default function HomePage() {
               <p className="mt-2 text-gray-600">Plod around Pomeroy Street</p>
             </Link>
             <Link
-              href={`${URL_PREFIX}usa/portland/1/explore/`}
+              href={`${URL_PREFIX}usa/portland/2/explore/`}
               className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
             >
               <Image

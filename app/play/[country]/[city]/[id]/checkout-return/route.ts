@@ -34,8 +34,6 @@ export const GET = async (request: NextRequest, response: NextResponse) => {
         user_id: getUserData?.user?.id,
       });
 
-    console.log({ purchaseCreditData, purchaseCreditError });
-
     return redirect(`${URL_PREFIX}${returnUrl}/create-game-session/`);
   }
 

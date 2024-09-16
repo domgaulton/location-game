@@ -162,7 +162,8 @@ export async function joinGame(
     .eq('unique_key', formData.get('unique_key') as string);
 
   if (gameSessionData?.length && !gameSessionError) {
-    const createdAtDate = new Date(gameSessionData[0].created_at);
+    const latestGameSession = gameSessionData[gameSessionData.length - 1];
+    const createdAtDate = new Date(latestGameSession.created_at);
     const currentTime = new Date();
 
     const withinInExpiration = new Date(
@@ -177,10 +178,10 @@ export async function joinGame(
       gameSessionCreatedInPastTwoHours && gameSessionCreatedInThePast;
 
     // Check user is on the right game board e.g. can't log into any random game
-    const gameId = gameSessionData[0].game_id;
+    const gameId = latestGameSession.game_id;
     const gameIdMatches = gameId === Number(gameIdFromUrl);
 
-    const gameSessionId = gameSessionData[0].id;
+    const gameSessionId = latestGameSession.id;
 
     if (isInLastTwoHours && gameIdMatches) {
       const expirationFromGameSessionTime = new Date(

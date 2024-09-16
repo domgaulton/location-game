@@ -48,7 +48,6 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
 
   const gameData = gamesData[0] as TGameData;
 
-  console.log({ gameData });
   return (
     <div className="flex flex-col container py-8 mx-auto text-center">
       <h2 className="text-2xl">Play {gameData.name}</h2>
