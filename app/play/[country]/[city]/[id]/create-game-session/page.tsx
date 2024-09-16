@@ -18,6 +18,7 @@ export default function LoginPage() {
     '/create-game-session',
     '/explore'
   );
+
   const redirectUrlPaymentSuccess = pathName.replace(
     '/create-game-session',
     ''
@@ -111,7 +112,7 @@ export default function LoginPage() {
       ) : (
         <CheckoutForm
           priceId={process.env.NEXT_PUBLIC_EXAMPLE_PRICE_ID!}
-          returnUrl={redirectUrlPaymentSuccess}
+          returnUrl={`${window.origin}${redirectUrlPaymentSuccess}`}
         />
       )}
 
