@@ -82,9 +82,14 @@ export default function LoginPage() {
       {hasCredits ? (
         <>
           <p>
-            You will have two hours to start the game. If you want to play with
-            friends, enter a key here and share it with them. (You can&apos;t
-            change this later)
+            You will have two hours until the game expires. If you want to play
+            with friends, enter a key here and share it with them. (You
+            can&apos;t change this later).
+          </p>
+
+          <p>
+            Then tell them to click 'Join Game' instead of logging in or
+            creating an account using your email and this code
           </p>
 
           <form className="flex flex-col mt-8">
