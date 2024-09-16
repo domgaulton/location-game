@@ -88,8 +88,8 @@ export default function LoginPage() {
           </p>
 
           <p>
-            Then tell them to click 'Join Game' instead of logging in or
-            creating an account using your email and this code
+            Then tell them to click &apos;Join Game&apos; instead of logging in
+            or creating an account using your email and this code
           </p>
 
           <form className="flex flex-col mt-8">
