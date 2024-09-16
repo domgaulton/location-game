@@ -28,17 +28,17 @@ export const GET = async (request: NextRequest, response: NextResponse) => {
 
     const { data: getUserData } = await supabase.auth.getUser();
 
-    const { error: purchaseCreditData, error: purchaseCreditError } =
-      await supabase.from('user_purchase_credits').insert({
+    const { error: purchaseCreditError } = await supabase
+      .from('user_purchase_credits')
+      .insert({
         purchase_id: stripeSessionId,
         user_id: getUserData?.user?.id,
       });
 
     console.log('Checkout Return Data');
-    console.log({ purchaseCreditData });
     console.log({ purchaseCreditError });
 
-    if (purchaseCreditData && !purchaseCreditError) {
+    if (!purchaseCreditError) {
       return redirect(`${URL_PREFIX}${returnUrl}/create-game-session/`);
     }
   }
