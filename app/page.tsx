@@ -1,5 +1,6 @@
 // app/page.js
 
+import { URL_PREFIX } from '@/consts';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -42,7 +43,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-6">Featured Games</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <Link
-              href="/play/england/london/pomeroy-street"
+              href={`${URL_PREFIX}england/london/1/explore/`}
               className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
             >
               <Image
@@ -56,7 +57,7 @@ export default function HomePage() {
               <p className="mt-2 text-gray-600">Plod around Pomeroy Street</p>
             </Link>
             <Link
-              href="/play/usa/portland/portland-pubs"
+              href={`${URL_PREFIX}usa/portland/2/explore/`}
               className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
             >
               <Image

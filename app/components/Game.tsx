@@ -5,8 +5,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Leaflet from 'leaflet';
 import MarkerClue from './MarkerClue';
-import { TGameData, TGameLocalStorage } from '@/types';
-import { LOCAL_STORAGE_KEY } from '@/consts';
+import { TGameData, TGameStatus } from '@/types';
+import { UNIQUE_GUEST_COOKIE } from '@/consts';
+import { createClient } from '../lib/supabase/client';
 
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -17,20 +18,81 @@ Leaflet.Icon.Default.mergeOptions({
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
+const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [gameStatus, setGameStatus] = useState<TGameLocalStorage>({});
+  // set state from game object
+  const [gameStatus, setGameStatus] = useState<TGameStatus>({
+    [gameId]: {
+      clueIds: game_clues
+        .filter((clue) => clue.solved)
+        .map((item) => item.clueId),
+      score: 0,
+    },
+  });
   const [location, setLocation] = useState({
     lat: startingLocation.lat,
     lng: startingLocation.lng,
     loaded: false,
   });
 
+  const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (!parts || !parts.length) return '';
+    if (parts.length === 2) return parts.pop()?.split(';')?.shift();
+  };
+
+  const uniqueGameSession = getCookie(UNIQUE_GUEST_COOKIE);
+
+  const supabase = createClient();
+
+  supabase
+    .channel('custom-all-channel')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'game_session_clues_solved',
+        filter: `game_session_id=eq.${uniqueGameSession}`,
+      },
+      (payload) => {
+        const updatedClue = payload.new;
+
+        const updatedClueHasBeenSolved = (updatedClue as { solved: boolean })
+          .solved;
+        const gameStatusDoesNotContainClue = !gameStatus[
+          gameId
+        ]?.clueIds?.includes((updatedClue as { clue_id: string })?.clue_id);
+
+        if (
+          updatedClue &&
+          updatedClueHasBeenSolved &&
+          gameStatusDoesNotContainClue
+        ) {
+          const duplicateGameStatus: TGameStatus = { ...gameStatus };
+
+          const updatedGameData: TGameStatus = {
+            ...duplicateGameStatus,
+            [gameId]: {
+              ...duplicateGameStatus[gameId],
+              clueIds: [
+                ...(duplicateGameStatus[gameId]?.clueIds || []),
+                (updatedClue as { clue_id: string }).clue_id,
+              ],
+            },
+          };
+
+          setGameStatus(updatedGameData);
+        }
+      }
+    )
+    .subscribe();
+
   const requestLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log('User location:', position.coords);
+        () => {
           setErrorMessage('');
         },
         (error) => {
@@ -68,13 +130,13 @@ const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
   });
 
   const handleUpdateScore = (points: number) => {
-    const duplicateGameStatus: TGameLocalStorage = { ...gameStatus };
+    const duplicateGameStatus: TGameStatus = { ...gameStatus };
 
     const updatedScore = duplicateGameStatus[gameId]?.score
       ? duplicateGameStatus[gameId]?.score + points
       : points;
 
-    const updatedGameData: TGameLocalStorage = {
+    const updatedGameData: TGameStatus = {
       ...duplicateGameStatus,
       [gameId]: {
         ...duplicateGameStatus[gameId],
@@ -86,19 +148,6 @@ const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
   };
 
   useEffect(() => {
-    let previousGameStatus: TGameLocalStorage = {};
-
-    try {
-      previousGameStatus = JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'
-      );
-      if (Object.keys(previousGameStatus).length) {
-        setGameStatus(previousGameStatus);
-      }
-    } catch (err) {
-      console.error('Error parsing local storage data');
-    }
-
     if ('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
         (position) => {
@@ -142,17 +191,17 @@ const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
               </Popup>
             </Marker>
 
-            {clues.map((clue, index) => (
+            {game_clues.map((clue, index) => (
               <MarkerClue
                 key={index} // Add a unique key to each MarkerClue
                 gameId={gameId}
                 currentLocation={location}
                 clueId={clue.clueId}
-                markerPosition={clue.markerPosition}
+                location={clue.location}
                 question={clue.question}
                 answer={clue.answer}
                 answerReply={clue.answerReply}
-                clueCompleted={
+                solved={
                   gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
                 }
                 points={clue.points}
@@ -174,6 +223,10 @@ const Game = ({ startingLocation, gameId, name, clues }: TGameData) => {
           >
             Enable Location Services
           </button>
+
+          <p className="mb-4">
+            Once you have enabled location services, refresh the page to start
+          </p>
 
           {errorMessage && (
             <div className="text-red-600 mt-4">{errorMessage}</div>
