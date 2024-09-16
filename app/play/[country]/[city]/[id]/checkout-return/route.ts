@@ -34,7 +34,9 @@ export const GET = async (request: NextRequest, response: NextResponse) => {
         user_id: getUserData?.user?.id,
       });
 
-    return redirect(`${URL_PREFIX}${returnUrl}/create-game-session/`);
+    if (purchaseCreditData && !purchaseCreditError) {
+      return redirect(`${URL_PREFIX}${returnUrl}/create-game-session/`);
+    }
   }
 
   if (session.status === 'open') {
