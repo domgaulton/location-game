@@ -106,6 +106,28 @@ export async function startGameSession(
     })
     .select('id');
 
+  // Get rows from user_purchase_credits table which have not been used
+  const {
+    data: userPurchaseCreditsSelectData,
+    error: userPurchaseCreditsSelectError,
+  } = await supabase
+    .from('user_purchase_credits')
+    .select('id')
+    .eq('user_id', userData.user.id)
+    .is('used_at', null);
+
+  if (
+    gameSessionData &&
+    userPurchaseCreditsSelectData &&
+    !userPurchaseCreditsSelectError
+  ) {
+    await supabase
+      .from('user_purchase_credits')
+      .update({ used_at: new Date(), game_session_id: gameSessionData[0].id })
+      .eq('id', userPurchaseCreditsSelectData[0].id)
+      .select();
+  }
+
   if (!gameSessionError && gameSessionData && gameSessionData[0].id) {
     const cookieExpiry = new Date(new Date().getTime() + COOKIE_EXPIRE_TIME);
 

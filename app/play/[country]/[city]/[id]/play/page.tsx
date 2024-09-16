@@ -3,7 +3,7 @@ import { TPageTemplate } from '@/types';
 import dynamic from 'next/dynamic';
 import { notFound, redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { UNIQUE_GUEST_COOKIE } from '@/consts';
+import { UNIQUE_GUEST_COOKIE, URL_PREFIX } from '@/consts';
 
 const GameTemplate = dynamic(() => import('@/app/components/Game'), {
   ssr: false,
@@ -20,9 +20,9 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
 
   if (!cookie) {
     if (!getUserData?.user) {
-      redirect(`/play/${country}/${city}/${id}/authenticate`);
+      redirect(`${URL_PREFIX}${country}/${city}/${id}/authenticate`);
     } else {
-      redirect(`/play/${country}/${city}/${id}/create-game-session`);
+      redirect(`${URL_PREFIX}${country}/${city}/${id}/create-game-session`);
     }
   }
 

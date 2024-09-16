@@ -1,4 +1,4 @@
-import { UNIQUE_GUEST_COOKIE } from '@/consts';
+import { UNIQUE_GUEST_COOKIE, URL_PREFIX } from '@/consts';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -42,7 +42,7 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
-    request.nextUrl.pathname.startsWith('/play/') &&
+    request.nextUrl.pathname.startsWith(URL_PREFIX) &&
     !request.nextUrl.pathname.endsWith('/authenticate') &&
     !request.nextUrl.pathname.endsWith('/explore') &&
     !request.nextUrl.pathname.endsWith('/play') &&

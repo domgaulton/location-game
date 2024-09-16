@@ -1,5 +1,6 @@
 import { createClient } from '@/app/lib/supabase/server';
 import capitalise from '@/app/utils/capitalise';
+import { URL_PREFIX } from '@/consts';
 import { TGameData, TPageTemplate } from '@/types';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -53,7 +54,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
       <h2 className="text-2xl">Play {gameData.name}</h2>
       <Link
         className="bg-yellow-400 my-4 p-3 hover:bg-yellow-600 inline-block"
-        href={`/play/${params.country}/${params.city}/${params.id}/play/`}
+        href={`${URL_PREFIX}${params.country}/${params.city}/${params.id}/play/`}
       >
         Click Here To Play
       </Link>
