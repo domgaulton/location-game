@@ -8,7 +8,7 @@ import { Marker, Popup } from 'react-leaflet';
 import stringSimilarity from '../utils/stringSimilarity';
 import { createClient } from '../lib/supabase/client';
 
-const LOCATION_ACCURACY = 0.001;
+const LOCATION_ACCURACY = 0.1;
 
 const MarkerClue = ({
   clueId,
