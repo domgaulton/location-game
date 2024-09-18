@@ -18,6 +18,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   const { data: getUserData } = await supabase.auth.getUser();
   const cookie = cookieStore.get(UNIQUE_GUEST_COOKIE);
 
+  console.log({ getUserData, cookie });
   if (!cookie) {
     if (!getUserData?.user) {
       redirect(`${URL_PREFIX}${country}/${city}/${id}/authenticate`);
@@ -32,8 +33,8 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
       `id, 
       name, 
       description,
-      startingLocation ( lat, lng ),
-      game_clues ( id, question, answer, answerReply, points, 
+      location ( lat, lng ),
+      game_clues ( id, question, answer, answer_reply, points, 
         location ( lat, lng ) 
       ),
       game_sessions ( id, game_id, user_id, created_at ,
@@ -42,6 +43,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
     )
     .eq('id', params.id);
 
+  console.log({ gamesData, gamesError });
   if (!gamesData || gamesError) {
     notFound();
   }
@@ -52,8 +54,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
 
   const gameData = {
     name: gamesData[0].name,
-    startingLocation:
-      gamesData[0].startingLocation[0] || gamesData[0].startingLocation, // issue with array type
+    location: gamesData[0].location[0] || gamesData[0].location, // issue with array type
     game_clues: gamesData[0].game_clues.map((clue) => {
       return {
         ...clue,
@@ -69,7 +70,7 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
 
   return (
     <GameTemplate
-      startingLocation={gameData.startingLocation}
+      location={gameData.location}
       gameId={params.id}
       game_clues={gameData.game_clues}
       name={gameData.name}

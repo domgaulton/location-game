@@ -18,7 +18,12 @@ Leaflet.Icon.Default.mergeOptions({
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
+const Game = ({
+  location: startingLocation,
+  gameId,
+  name,
+  game_clues,
+}: TGameData) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   // set state from game object
   const [gameStatus, setGameStatus] = useState<TGameStatus>({
@@ -200,7 +205,7 @@ const Game = ({ startingLocation, gameId, name, game_clues }: TGameData) => {
                 location={clue.location}
                 question={clue.question}
                 answer={clue.answer}
-                answerReply={clue.answerReply}
+                answer_reply={clue.answer_reply}
                 solved={
                   gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
                 }
