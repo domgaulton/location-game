@@ -8,14 +8,14 @@ import { Marker, Popup } from 'react-leaflet';
 import stringSimilarity from '../utils/stringSimilarity';
 import { createClient } from '../lib/supabase/client';
 
-const LOCATION_ACCURACY = 0.001;
+const LOCATION_ACCURACY = 0.1;
 
 const MarkerClue = ({
   clueId,
   currentLocation,
   question,
   answer,
-  answerReply,
+  answer_reply,
   location,
   solved,
   points,
@@ -112,8 +112,8 @@ const MarkerClue = ({
             <h3 className="font-bold mb-2">{question}</h3>
             {submittedAnswer ? (
               answerCorrect ? (
-                answerReply ? (
-                  answerReply
+                answer_reply ? (
+                  answer_reply
                 ) : (
                   <p>Correct! {submittedAnswer}</p>
                 )
