@@ -18,7 +18,6 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   const { data: getUserData } = await supabase.auth.getUser();
   const cookie = cookieStore.get(UNIQUE_GUEST_COOKIE);
 
-  console.log({ getUserData, cookie });
   if (!cookie) {
     if (!getUserData?.user) {
       redirect(`${URL_PREFIX}${country}/${city}/${id}/authenticate`);
@@ -43,7 +42,6 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
     )
     .eq('id', params.id);
 
-  console.log({ gamesData, gamesError });
   if (!gamesData || gamesError) {
     notFound();
   }

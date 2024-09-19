@@ -77,6 +77,15 @@ ALTER TABLE public.games ENABLE ROW LEVEL SECURITY;
 -- Enable Row Level Security for the game_clues table
 ALTER TABLE public.game_clues ENABLE ROW LEVEL SECURITY;
 
+-- Enable Row Level Security for the game_clues table
+ALTER TABLE public.game_sessions ENABLE ROW LEVEL SECURITY;
+
+-- Enable Row Level Security for the game_clues table
+ALTER TABLE public.user_purchase_credits ENABLE ROW LEVEL SECURITY;
+
+-- Enable Row Level Security for the game_clues table
+ALTER TABLE public.user_purchase_credits ENABLE ROW LEVEL SECURITY;
+
 -- Policy for insert access for users based on user_id
 CREATE POLICY "Enable insert for users based on user_id"
 ON users
@@ -103,6 +112,41 @@ USING (true);
 -- Create policy for read access on the game_clues table
 CREATE POLICY "Enable read access for all users"
 ON game_clues
+FOR SELECT
+TO public
+USING (true);
+
+-- Create a policy to allow users to view their own data for user_purchase_credits
+CREATE POLICY "Allow users to view their own data"
+ON user_purchase_credits
+FOR SELECT
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- Create a policy to allow users to insert their own data for user_purchase_credits
+CREATE POLICY "Allow users to insert their own data"
+ON user_purchase_credits
+FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+-- Create a policy to guests to find data for game_sessions
+CREATE POLICY "Enable read access for all users"
+ON game_sessions
+FOR SELECT
+TO public
+USING (true);
+
+-- Create a policy to allow users to insert their own data for game_sessions
+CREATE POLICY "Allow users to insert their own data"
+ON game_sessions
+FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+-- Create policy for read access on the game_session_clues_solved table
+CREATE POLICY "Enable read access for all users"
+ON game_session_clues_solved
 FOR SELECT
 TO public
 USING (true);
