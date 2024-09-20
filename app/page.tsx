@@ -72,6 +72,22 @@ export default function HomePage() {
                 Tour the old pubs of Portland
               </p>
             </Link>
+            <Link
+              href={`${URL_PREFIX}england/london/3/explore/`}
+              className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
+            >
+              <Image
+                src="/images/jack-the-ripper.webp"
+                alt="Mystery Tour"
+                className="w-full mb-4"
+                width={300}
+                height={200}
+              />
+              <h3 className="text-2xl font-semibold">
+                Jack The Ripper London Tour
+              </h3>
+              <p className="mt-2 text-gray-600">Haunted London East End Tour</p>
+            </Link>
           </div>
         </div>
       </section>
