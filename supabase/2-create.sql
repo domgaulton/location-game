@@ -20,7 +20,7 @@ CREATE TABLE games (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
-  location BIGINT REFERENCES locations(id), -- TO DO starting_location
+  location BIGINT REFERENCES locations(id), -- TODO starting_location
   overview TEXT NOT NULL
 );
 
