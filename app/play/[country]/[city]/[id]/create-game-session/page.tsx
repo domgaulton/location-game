@@ -82,7 +82,10 @@ export default function LoginPage() {
 
       {hasCredits ? (
         <>
-          <p>
+          <h3 className="text-xl font-bold mb-8">
+            Want to play with a friend?
+          </h3>
+          <p className="mb-2">
             You will have two hours until the game expires. If you want to play
             with friends, enter a key here and share it with them. (You
             can&apos;t change this later).

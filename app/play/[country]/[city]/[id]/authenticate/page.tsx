@@ -1,25 +1,78 @@
 'use client';
 import { joinGame, login, signUp } from '@/app/auth/supabase/actions';
 import { useParams, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-type SignUpType = 'login' | 'signUp' | 'joinGame';
+type SignUpType = 'signIn' | 'signUp' | 'joinGame';
 
 export default function LoginPage() {
-  const [signUpType, setSignUpType] = useState<SignUpType>('login');
+  const [signUpType, setSignUpType] = useState<SignUpType>('signIn');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const currentUrl = usePathname();
   const urlParms = useParams();
-  const { id: gameId } = urlParms;
 
   const updatedUrl = currentUrl.replace('/authenticate', '/play');
-  return (
-    <div className="flex flex-col container py-8 max-w-128 mx-auto">
-      <button onClick={() => setSignUpType('login')}>Login</button>
-      <button onClick={() => setSignUpType('signUp')}>Sign Up</button>
-      <button onClick={() => setSignUpType('joinGame')}>Join Game</button>
 
-      {signUpType === 'login' && (
-        <h1 className="text-2xl font-bold mb-8">Log in to start</h1>
+  const handleLogin = async (event: any) => {
+    const response = await login(event, updatedUrl);
+    console.log({ response });
+    if (response) {
+      setErrorMessage(response);
+    }
+  };
+
+  const handleSignUp = async (event: any) => {
+    const response = await signUp(event, updatedUrl);
+    console.log({ response });
+    if (response) {
+      setErrorMessage(response);
+    }
+  };
+
+  const handleJoinGame = async (event: any) => {
+    const { id: gameId } = urlParms;
+    const response = await joinGame(event, gameId as string, updatedUrl);
+    console.log({ response });
+    if (response) {
+      setErrorMessage(response);
+    }
+  };
+
+  useEffect(() => {
+    setErrorMessage('');
+  }, [signUpType]);
+
+  return (
+    <div className="flex flex-col container py-8 max-w-128 mx-auto px-4">
+      <div className="flex flex-col md:flex-row justify-around gap-2 items-center mb-8">
+        <button
+          className={`py-4 px-8 w-full md:w-auto rounded-lg ${
+            signUpType === 'signIn' ? 'bg-blue-500 text-white' : 'bg-blue-200'
+          }`}
+          onClick={() => setSignUpType('signIn')}
+        >
+          Sign In
+        </button>
+        <button
+          className={`py-4 px-8 w-full md:w-auto rounded-lg ${
+            signUpType === 'signUp' ? 'bg-blue-500 text-white' : 'bg-blue-200'
+          }`}
+          onClick={() => setSignUpType('signUp')}
+        >
+          Sign Up
+        </button>
+        <button
+          className={`py-4 px-8 w-full md:w-auto rounded-lg ${
+            signUpType === 'joinGame' ? 'bg-blue-500 text-white' : 'bg-blue-200'
+          }`}
+          onClick={() => setSignUpType('joinGame')}
+        >
+          Join Game
+        </button>
+      </div>
+
+      {signUpType === 'signIn' && (
+        <h1 className="text-2xl font-bold mb-8">Sign in to start</h1>
       )}
 
       {signUpType === 'signUp' && (
@@ -32,7 +85,7 @@ export default function LoginPage() {
 
       <form className="flex flex-col">
         <label htmlFor="email">
-          {signUpType === 'login' || signUpType === 'signUp'
+          {signUpType === 'signIn' || signUpType === 'signUp'
             ? 'Your'
             : 'Your Friends'}{' '}
           Email:
@@ -45,7 +98,7 @@ export default function LoginPage() {
           required
         />
 
-        {signUpType === 'login' && (
+        {signUpType === 'signIn' && (
           <>
             <label htmlFor="password">Password:</label>
             <input
@@ -59,7 +112,7 @@ export default function LoginPage() {
 
             <button
               className="bg-yellow-400 mt-8 p-3 hover:bg-yellow-600"
-              formAction={(e) => login(e, updatedUrl)}
+              formAction={(e) => handleLogin(e)}
             >
               Log In
             </button>
@@ -80,7 +133,7 @@ export default function LoginPage() {
 
             <button
               className="bg-yellow-400 mt-8 p-3 hover:bg-yellow-600"
-              formAction={(e) => signUp(e, updatedUrl)}
+              formAction={(e) => handleSignUp(e)}
             >
               Create Account
             </button>
@@ -100,12 +153,14 @@ export default function LoginPage() {
 
             <button
               className="bg-yellow-400 mt-8 p-3 hover:bg-yellow-600"
-              formAction={(e) => joinGame(e, gameId as string, updatedUrl)}
+              formAction={(e) => handleJoinGame(e)}
             >
               Join Game
             </button>
           </>
         )}
+
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       </form>
     </div>
   );

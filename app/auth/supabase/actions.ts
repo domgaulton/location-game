@@ -32,10 +32,11 @@ export async function login(formData: FormData, urlToRedirectTo: string) {
     password: formData.get('password') as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { error: signInWithPasswordError } =
+    await supabase.auth.signInWithPassword(data);
 
-  if (error) {
-    redirect('/error');
+  if (signInWithPasswordError) {
+    return 'Invalid login credentials';
   }
 
   revalidatePath(urlToRedirectTo, 'layout');
@@ -57,7 +58,10 @@ export async function signUp(formData: FormData, urlToRedirectTo: string) {
   );
 
   if (signUpError) {
-    redirect('/error');
+    if (signUpError.code === 'user_already_exists') {
+      return 'Account already exists';
+    }
+    return 'Error creating an account';
   }
 
   const { error: userInsertError } = await supabase.from('users').insert({
@@ -166,6 +170,11 @@ export async function joinGame(
     )
     .eq('email', formData.get('email') as string)
     .eq('unique_key', formData.get('unique_key') as string);
+
+  console.log({ gameSessionData, gameSessionError });
+  if (!gameSessionData?.length || gameSessionError) {
+    return 'Game credentials are invalid';
+  }
 
   if (gameSessionData?.length && !gameSessionError) {
     const latestGameSession = gameSessionData[gameSessionData.length - 1];
