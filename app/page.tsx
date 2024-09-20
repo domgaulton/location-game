@@ -88,6 +88,74 @@ export default function HomePage() {
               </h3>
               <p className="mt-2 text-gray-600">Haunted London East End Tour</p>
             </Link>
+            <Link
+              href={`${URL_PREFIX}wales/chepstow/4/explore/`}
+              className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
+            >
+              <Image
+                src="/images/chepstow.jpeg"
+                alt="Mystery Tour"
+                className="w-full mb-4"
+                width={300}
+                height={200}
+              />
+              <h3 className="text-2xl font-semibold">Chepstow Castle</h3>
+              <p className="mt-2 text-gray-600">
+                Discover the History of Chepstow Castle
+              </p>
+            </Link>
+            <Link
+              href={`${URL_PREFIX}england/bristol/5/explore/`}
+              className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
+            >
+              <Image
+                src="/images/bristol.webp"
+                alt="Mystery Tour"
+                className="w-full mb-4"
+                width={300}
+                height={200}
+              />
+              <h3 className="text-2xl font-semibold">
+                Bristol Pirate Adventure
+              </h3>
+              <p className="mt-2 text-gray-600">Your Pirate Adventure Awaits</p>
+            </Link>
+            <Link
+              href={`${URL_PREFIX}england/chippenham/6/explore/`}
+              className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
+            >
+              <Image
+                src="/images/chippenham.webp"
+                alt="Mystery Tour"
+                className="w-full mb-4"
+                width={300}
+                height={200}
+              />
+              <h3 className="text-2xl font-semibold">
+                Chippenham's Natural Beauty
+              </h3>
+              <p className="mt-2 text-gray-600">
+                Clues about animals, trees, and rivers
+              </p>
+            </Link>
+            <Link
+              href={`${URL_PREFIX}england/chippenham/7/explore/`}
+              className="bg-white shadow-lg p-6 rounded-lg hover:shadow-xl transition"
+            >
+              <Image
+                src="/images/chippenham-2.jpeg"
+                alt="Mystery Tour"
+                className="w-full mb-4"
+                width={300}
+                height={200}
+              />
+              <h3 className="text-2xl font-semibold">
+                Chippenham's Hidden History
+              </h3>
+              <p className="mt-2 text-gray-600">
+                Discover hidden secrets along the way
+              </p>
+            </Link>
           </div>
         </div>
       </section>
