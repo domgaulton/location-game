@@ -7,11 +7,13 @@ import Link from 'next/link';
 import { redirect, useParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function LoginPage() {
+export default function LoginPage({ params }: { params: { id: string } }) {
   const urlParms = useParams();
   const pathName = usePathname();
   const supabase = createClient();
+  const [isLoaded, setIsLoaded] = useState(false);
   const [hasCredits, setHasCredits] = useState(false);
+  const [gameName, setGameName] = useState('');
 
   const redirectUrlToPlay = pathName.replace('/create-game-session', '/play');
   const redirectUrlToExplore = pathName.replace(
@@ -49,16 +51,31 @@ export default function LoginPage() {
         .eq('user_id', getUserData?.user?.id)
         .is('used_at', null); // Correct;
 
-      return userPurchaseData;
+      const { data: gamesData } = await supabase
+        .from('games')
+        .select('name')
+        .eq('id', params.id); // Correct;
+
+      return { userPurchaseData, gamesData };
     };
 
     try {
       const result = fetchData();
 
       result.then((resultResponse) => {
-        if (resultResponse && resultResponse.length > 0) {
+        const { userPurchaseData, gamesData } = resultResponse;
+
+        console.log({ userPurchaseData, gamesData });
+
+        if (userPurchaseData && userPurchaseData.length > 0) {
           setHasCredits(true);
         }
+
+        if (gamesData && gamesData.length > 0 && gamesData[0].name) {
+          setGameName(gamesData[0].name);
+        }
+
+        setIsLoaded(true);
       });
     } catch (err) {
       console.log(err);
@@ -66,18 +83,21 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <div className="flex flex-col container py-8 mx-auto max-w-128">
-      <h1 className="text-2xl font-bold mb-8">Start Game</h1>
-      <p>We can see you are logged in and can start this game</p>
+    <div className="flex flex-col container py-8 mx-auto max-w-128 px-4">
+      <h1 className="text-2xl font-bold mb-8">Play {gameName} Now!</h1>
 
-      {hasCredits ? (
-        <h2 className="text-2xl font-bold mb-8 text-green-500">
-          You have credits to play this game
-        </h2>
+      {isLoaded ? (
+        hasCredits ? (
+          <h2 className="text-2xl font-bold mb-8 text-green-500">
+            You have credits to play this game
+          </h2>
+        ) : (
+          <h2 className="text-2xl font-bold mb-8 text-red-500">
+            You need credits to play this game
+          </h2>
+        )
       ) : (
-        <h2 className="text-2xl font-bold mb-8 text-red-500">
-          You need credits to play this game
-        </h2>
+        <p>Loading...</p>
       )}
 
       {hasCredits ? (
@@ -85,38 +105,48 @@ export default function LoginPage() {
           <h3 className="text-xl font-bold mb-8">
             Want to play with a friend?
           </h3>
-          <p className="mb-2">
-            You will have two hours until the game expires. If you want to play
-            with friends, enter a key here and share it with them. (You
-            can&apos;t change this later).
-          </p>
 
-          <p>
-            Then tell them to click &apos;Join Game&apos; instead of logging in
-            or creating an account using your email and this code
-          </p>
-
-          <form className="flex flex-col mt-8">
+          <form className="flex flex-col">
             <>
               <label htmlFor="unique_key">
-                Optional Key For Friends to Join:
+                Optional 6 digit code for friends to join:
               </label>
               <input
                 id="unique_key"
                 name="unique_key"
-                type="unique_key"
-                className="border p-3"
+                type="number"
+                className="border p-3 dark:text-black"
+                pattern="[0-9]{6}"
               />
               <button
-                className="bg-yellow-400 my-2 p-3 hover:bg-yellow-600"
+                className="bg-yellow-400 text-black my-2 p-3 hover:bg-yellow-600"
                 formAction={(e) =>
                   startGameSession(e, `${urlParms.id}`, redirectUrlToPlay)
                 }
               >
-                Start Game
+                Play {gameName} Now!
               </button>
             </>
           </form>
+          <h3 className="text-xl font-bold mb-8">Instructions</h3>
+          <p className="mb-2">
+            You can share the game with friends by creating a unique key and
+            sharing it with them. Recommend a 6 digit numerical code
+          </p>
+
+          <p className="mb-2">
+            You will have four hours until the game expires. If you want to play
+            with friends, enter a key here and let them know it.
+          </p>
+
+          <h3 className="text-xl font-bold mb-8">
+            You can&apos;t change the optional code later
+          </h3>
+
+          <p>
+            Then tell them to click &apos;Join Friends Game&apos; (they don't
+            need to sign up) and use this key along with your email address
+          </p>
         </>
       ) : (
         <CheckoutForm
@@ -125,16 +155,22 @@ export default function LoginPage() {
         />
       )}
 
-      <p>Don&apos;t want to start the game just yet?</p>
+      <h3 className="text-xl font-bold mb-8">
+        Don&apos;t want to play {gameName} just yet?
+      </h3>
+
       <Link
-        className="bg-blue-300 hover:bg-blue-400 p-4 my-4"
+        className="bg-blue-300 hover:bg-blue-500 hover:text-white text-black p-4 my-4"
         href={redirectUrlToExplore}
       >
         Back to Explore Game
       </Link>
 
-      <Link className="bg-blue-300 hover:bg-blue-400 p-4" href={'/'}>
-        Back to Home
+      <Link
+        className="bg-blue-300 hover:bg-blue-500 hover:text-white text-black p-4"
+        href={'/'}
+      >
+        See Other Games
       </Link>
     </div>
   );

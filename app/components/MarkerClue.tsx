@@ -134,7 +134,7 @@ const MarkerClue = ({
                   type="text"
                   value={userAnswer}
                   onChange={handleInputChange}
-                  className="p-1 border border-gray-300 rounded"
+                  className="p-1 border border-gray-300 rounded dark:text-black"
                   placeholder="Type your answer..."
                 />
                 <button

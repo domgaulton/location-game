@@ -87,7 +87,7 @@ const Game = ({
               ],
             },
           };
-
+          console.log(updatedGameData);
           setGameStatus(updatedGameData);
         }
       }
@@ -134,6 +134,15 @@ const Game = ({
     popupAnchor: [0, -10], // Position of the popup in relation to the marker
   });
 
+  const handleStartNewGame = () => {
+    const userWantsToQuitGame = confirm('Are you sure?');
+
+    if (userWantsToQuitGame) {
+      document.cookie = `${UNIQUE_GUEST_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      window.location.reload();
+    }
+  };
+
   const handleUpdateScore = (points: number) => {
     const duplicateGameStatus: TGameStatus = { ...gameStatus };
 
@@ -176,6 +185,15 @@ const Game = ({
     <div className="h-100vh relative" style={{ height: '100vh' }}>
       {location.loaded ? (
         <>
+          <button
+            className="z-[1000] text-xs md:text-md fixed top-4 right-4 bg-white p-2 md:p-4 text-left text-black"
+            onClick={handleStartNewGame}
+          >
+            Score: {gameStatus[gameId]?.score || 0}
+            <br />
+            <br />
+            Start New Game
+          </button>
           <MapContainer
             center={[location.lat, location.lng]}
             zoom={13}

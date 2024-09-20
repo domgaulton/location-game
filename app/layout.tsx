@@ -35,7 +35,7 @@ export default async function RootLayout({
       >
         {userData.user && (
           <Link
-            className="z-[1000] fixed top-4 right-4 bg-white p-4"
+            className="z-[1000] text-xs md:text-md fixed top-4 right-4 bg-white p-2 md:p-4 text-left text-black"
             href="/account"
           >
             Account

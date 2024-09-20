@@ -49,15 +49,15 @@ const PageTemplate = async ({ params }: TPageTemplate) => {
   const gameData = gamesData[0] as TGameData;
 
   return (
-    <div className="flex flex-col container py-8 mx-auto text-center">
+    <div className="flex flex-col container py-8 max-w-128 mx-auto px-4 text-center">
       <h2 className="text-2xl">Play {gameData.name}</h2>
       <Link
-        className="bg-yellow-400 my-4 p-3 hover:bg-yellow-600 inline-block"
+        className="bg-yellow-400 my-4 p-3 hover:bg-yellow-600 inline-block text-black"
         href={`${URL_PREFIX}${params.country}/${params.city}/${params.id}/play/`}
       >
         Click Here To Play
       </Link>
-      <ReactMarkdown>{gameData.overview}</ReactMarkdown>
+      <ReactMarkdown className="prose">{gameData.overview}</ReactMarkdown>
     </div>
   );
 };
