@@ -144,8 +144,9 @@ export default function LoginPage({ params }: { params: { id: string } }) {
           </h3>
 
           <p>
-            Then tell them to click &apos;Join Friends Game&apos; (they don't
-            need to sign up) and use this key along with your email address
+            Then tell them to click &apos;Join Friends Game&apos; (they
+            don&apos;t need to sign up) and use this key along with your email
+            address
           </p>
         </>
       ) : (

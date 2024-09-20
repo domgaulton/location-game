@@ -132,7 +132,7 @@ export default function HomePage() {
                 height={200}
               />
               <h3 className="text-2xl font-semibold">
-                Chippenham's Natural Beauty
+                Chippenham&apos;s Natural Beauty
               </h3>
               <p className="mt-2 text-gray-600">
                 Clues about animals, trees, and rivers
@@ -150,7 +150,7 @@ export default function HomePage() {
                 height={200}
               />
               <h3 className="text-2xl font-semibold">
-                Chippenham's Hidden History
+                Chippenham&apos;s Hidden History
               </h3>
               <p className="mt-2 text-gray-600">
                 Discover hidden secrets along the way
