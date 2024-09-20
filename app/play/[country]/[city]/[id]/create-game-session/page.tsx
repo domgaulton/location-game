@@ -42,6 +42,7 @@ export default function LoginPage() {
     const fetchData = async () => {
       const { data: getUserData } = await supabase.auth.getUser();
 
+      // get empty user credits
       const { data: userPurchaseData } = await supabase
         .from('user_purchase_credits')
         .select('id')

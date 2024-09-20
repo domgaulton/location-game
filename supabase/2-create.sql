@@ -36,15 +36,6 @@ CREATE TABLE game_clues (
   game_id BIGINT REFERENCES games(id)
 );
 
--- Create the user_purchase_credits table
-CREATE TABLE user_purchase_credits (
-  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-  used_at TIMESTAMP WITH TIME ZONE NULL,
-  purchase_id TEXT NOT NULL,
-  user_id UUID NOT NULL REFERENCES users(user_id), -- Changed to UUID
-  game_session_id TEXT NULL
-);
 
 -- Create the game_sessions table
 CREATE TABLE game_sessions (
@@ -52,8 +43,19 @@ CREATE TABLE game_sessions (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   user_id UUID NOT NULL REFERENCES users(user_id), -- Changed to UUID
   game_id BIGINT REFERENCES games(id),
-  email TEXT NOT NULL,
+  email TEXT NOT NULL, -- TODO Link to user table
   unique_key TEXT NULL
+);
+
+
+-- Create the user_purchase_credits table
+CREATE TABLE user_purchase_credits (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  used_at TIMESTAMP WITH TIME ZONE NULL,
+  purchase_id TEXT NOT NULL,
+  user_id UUID NOT NULL REFERENCES users(user_id), -- Changed to UUID
+  game_session_id BIGINT REFERENCES game_sessions(id) NULL
 );
 
 -- Create the game_session_clues_solved table
@@ -61,8 +63,7 @@ CREATE TABLE game_session_clues_solved (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   clue_id BIGINT REFERENCES game_clues(id),
   solved BOOLEAN NOT NULL,
-  game_session_id BIGINT REFERENCES game_sessions(id),
-  game_id BIGINT REFERENCES games(id)
+  game_session_id BIGINT REFERENCES game_sessions(id)
 );
 
 -- Enable Row Level Security for the users table
@@ -129,6 +130,13 @@ ON user_purchase_credits
 FOR INSERT
 TO authenticated
 WITH CHECK (auth.uid() = user_id);
+
+-- Create a policy to allow users to insert their own data for user_purchase_credits
+CREATE POLICY "Allow users to update their own data"
+ON user_purchase_credits
+FOR UPDATE
+TO authenticated
+USING (auth.uid() = user_id);
 
 -- Create a policy to guests to find data for game_sessions
 CREATE POLICY "Enable read access for all users"

@@ -121,12 +121,17 @@ export async function startGameSession(
     userPurchaseCreditsSelectData &&
     !userPurchaseCreditsSelectError
   ) {
-    const { error: purchaseUpdateCreditError } = await supabase
+    const gameSessionId = gameSessionData[0].id;
+    const purchaseCreditsRowId = userPurchaseCreditsSelectData[0].id;
+    const { data: updateCreditData, error: updateCreditError } = await supabase
       .from('user_purchase_credits')
-      .update({ used_at: new Date(), game_session_id: gameSessionData[0].id })
-      .eq('id', userPurchaseCreditsSelectData[0].id);
-
-    console.log({ purchaseUpdateCreditError });
+      .update({
+        used_at: '2024-09-19 11:48:39.154961+00',
+        game_session_id: gameSessionId,
+      })
+      .eq('id', purchaseCreditsRowId)
+      .eq('user_id', userData.user.id)
+      .select('id, used_at, game_session_id');
   }
 
   if (!gameSessionError && gameSessionData && gameSessionData[0].id) {
