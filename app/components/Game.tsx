@@ -87,7 +87,6 @@ const Game = ({
               ],
             },
           };
-          console.log(updatedGameData);
           setGameStatus(updatedGameData);
         }
       }
@@ -189,7 +188,7 @@ const Game = ({
             className="z-[1000] text-xs md:text-md fixed top-4 right-4 bg-white p-2 md:p-4 text-left text-black"
             onClick={handleStartNewGame}
           >
-            Score: {gameStatus[gameId]?.score || 0}
+            Score: {(gameStatus[gameId]?.clueIds?.length || 0) * 10}
             <br />
             <br />
             Start New Game
@@ -205,9 +204,6 @@ const Game = ({
             />
             <Marker position={[location.lat, location.lng]} icon={blueDotIcon}>
               <Popup>
-                <h3 className="font-bold mb-3">
-                  Your Score: {gameStatus[gameId]?.score || 0}
-                </h3>
                 <h3 className="font-bold">Your Position</h3>
                 Latitude: {parseFloat(`${location.lat}`).toFixed(2)} <br />
                 Longitude: {parseFloat(`${location.lng}`).toFixed(2)} <br />
