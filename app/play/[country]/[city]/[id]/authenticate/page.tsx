@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const updatedUrl = currentUrl.replace('/authenticate', '/play');
 
-  const handleLogin = async (event: any) => {
+  const handleLogin = async (event: FormData) => {
     const response = await login(event, updatedUrl);
     console.log({ response });
     if (response) {
@@ -21,7 +21,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleSignUp = async (event: any) => {
+  const handleSignUp = async (event: FormData) => {
     const response = await signUp(event, updatedUrl);
     console.log({ response });
     if (response) {
@@ -29,7 +29,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleJoinGame = async (event: any) => {
+  const handleJoinGame = async (event: FormData) => {
     const { id: gameId } = urlParms;
     const response = await joinGame(event, gameId as string, updatedUrl);
     console.log({ response });

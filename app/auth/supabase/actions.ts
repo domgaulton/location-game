@@ -136,6 +136,8 @@ export async function startGameSession(
       .eq('id', purchaseCreditsRowId)
       .eq('user_id', userData.user.id)
       .select('id, used_at, game_session_id');
+
+    console.log({ updateCreditData, updateCreditError });
   }
 
   if (!gameSessionError && gameSessionData && gameSessionData[0].id) {
