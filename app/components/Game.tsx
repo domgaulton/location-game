@@ -254,7 +254,7 @@ const Game = ({
         gameStatus[gameId]?.clueIds?.length === game_clues.length ? (
           <div className="flex flex-col items-center gap-8 pt-8 mx-8">
             <h1 className="text-2xl font-bold text-center mt-4">
-              Congratulations! You have completed the game.
+              Congratulations! You finished!
             </h1>
             <h2 className="text-xl font-bold text-center mt-4">
               In {getTimeDifference(gameStatus[gameId].startTime).hours} hours
