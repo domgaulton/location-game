@@ -8,6 +8,7 @@ import MarkerClue from './MarkerClue';
 import { TGameData, TGameStatus } from '@/types';
 import { UNIQUE_GUEST_COOKIE } from '@/consts';
 import { createClient } from '../lib/supabase/client';
+import Link from 'next/link';
 
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -87,6 +88,7 @@ const Game = ({
               ],
             },
           };
+
           setGameStatus(updatedGameData);
         }
       }
@@ -183,52 +185,74 @@ const Game = ({
   return (
     <div className="h-100vh relative" style={{ height: '100vh' }}>
       {location.loaded ? (
-        <>
-          <button
-            className="z-[1000] text-xs md:text-md fixed top-4 right-4 bg-white p-2 md:p-4 text-left text-black"
-            onClick={handleStartNewGame}
-          >
-            Score: {(gameStatus[gameId]?.clueIds?.length || 0) * 10}
-            <br />
-            <br />
-            Start New Game
-          </button>
-          <MapContainer
-            center={[location.lat, location.lng]}
-            zoom={13}
-            style={{ height: '100%' }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker position={[location.lat, location.lng]} icon={blueDotIcon}>
-              <Popup>
-                <h3 className="font-bold">Your Position</h3>
-                Latitude: {parseFloat(`${location.lat}`).toFixed(2)} <br />
-                Longitude: {parseFloat(`${location.lng}`).toFixed(2)} <br />
-              </Popup>
-            </Marker>
-
-            {game_clues.map((clue, index) => (
-              <MarkerClue
-                key={index} // Add a unique key to each MarkerClue
-                gameId={gameId}
-                currentLocation={location}
-                clueId={clue.clueId}
-                location={clue.location}
-                question={clue.question}
-                answer={clue.answer}
-                answer_reply={clue.answer_reply}
-                solved={
-                  gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
-                }
-                points={clue.points}
-                handleUpdateScore={handleUpdateScore}
+        gameStatus[gameId]?.clueIds?.length === game_clues.length ? (
+          <div className="flex flex-col items-center gap-8 pt-8 mx-8">
+            <h1 className="text-2xl font-bold text-center mt-4">
+              Congratulations! You have completed the game.
+            </h1>
+            <h2 className="text-xl font-bold text-center mt-4">
+              Your final score is: {gameStatus[gameId]?.score}
+            </h2>
+            <Link
+              href="/"
+              className={
+                'py-2 px-8 w-full md:w-auto rounded-lg bg-gray-600 text-white inline-block mx-auto text-center mb-4'
+              }
+            >
+              Home
+            </Link>
+          </div>
+        ) : (
+          <>
+            <button
+              className="z-[1000] text-xs md:text-md fixed top-4 right-4 bg-white p-2 md:p-4 text-left text-black"
+              onClick={handleStartNewGame}
+            >
+              Score: {(gameStatus[gameId]?.clueIds?.length || 0) * 10}
+              <br />
+              <br />
+              Start New Game
+            </button>
+            <MapContainer
+              center={[location.lat, location.lng]}
+              zoom={13}
+              style={{ height: '100%' }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-            ))}
-          </MapContainer>
-        </>
+              <Marker
+                position={[location.lat, location.lng]}
+                icon={blueDotIcon}
+              >
+                <Popup>
+                  <h3 className="font-bold">Your Position</h3>
+                  Latitude: {parseFloat(`${location.lat}`).toFixed(2)} <br />
+                  Longitude: {parseFloat(`${location.lng}`).toFixed(2)} <br />
+                </Popup>
+              </Marker>
+
+              {game_clues.map((clue, index) => (
+                <MarkerClue
+                  key={index} // Add a unique key to each MarkerClue
+                  gameId={gameId}
+                  currentLocation={location}
+                  clueId={clue.clueId}
+                  location={clue.location}
+                  question={clue.question}
+                  answer={clue.answer}
+                  answer_reply={clue.answer_reply}
+                  solved={
+                    gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
+                  }
+                  points={clue.points}
+                  handleUpdateScore={handleUpdateScore}
+                />
+              ))}
+            </MapContainer>
+          </>
+        )
       ) : (
         <div className="container mx-auto text-center py-6">
           <h1 className="text-2xl font-bold mb-4">Allow Location Access</h1>
