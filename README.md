@@ -35,9 +35,11 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-### TO DOs
+### TODOs
 
 - Before starting a game - confirm you want to buy a game for this one or another?
 - Say when a guest joins
 - Score in points in the game
 - Guest game - 'log out' and start new game
+- Time to go in current game
+- Finish score with score board for games - new table
