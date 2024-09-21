@@ -43,3 +43,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - Guest game - 'log out' and start new game
 - Time to go in current game
 - Finish score with score board for games - new table
+- Cookie decrypt logic - not just id of game session
