@@ -8,7 +8,8 @@ import { Marker, Popup } from 'react-leaflet';
 import stringSimilarity from '../utils/stringSimilarity';
 import { createClient } from '../lib/supabase/client';
 
-const LOCATION_ACCURACY = 0.008;
+// const LOCATION_ACCURACY = 0.008;
+const LOCATION_ACCURACY = 10;
 
 const MarkerClue = ({
   clueId,
@@ -120,6 +121,14 @@ const MarkerClue = ({
               ) : (
                 <>
                   <div>Not Correct: {submittedAnswer}</div>
+
+                  <div>
+                    Hint:{' '}
+                    {answer
+                      .split('')
+                      .map((char) => (Math.random() > 0.7 ? char : '_')) // 70% chance to hide each character
+                      .join('')}
+                  </div>
                   <button
                     onClick={handleReset}
                     className="p-1 bg-blue-500 text-white rounded hover:bg-blue-600"

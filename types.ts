@@ -53,5 +53,6 @@ export type TGameStatus = {
   [key: string]: {
     clueIds?: string[];
     score: number;
+    startTime: Date;
   };
 };

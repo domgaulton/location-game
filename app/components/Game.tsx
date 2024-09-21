@@ -8,7 +8,7 @@ import MarkerClue from './MarkerClue';
 import { TGameData, TGameStatus } from '@/types';
 import { UNIQUE_GUEST_COOKIE } from '@/consts';
 import { createClient } from '../lib/supabase/client';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -25,6 +25,8 @@ const Game = ({
   name,
   game_clues,
 }: TGameData) => {
+  const router = useRouter();
+
   const [errorMessage, setErrorMessage] = useState<string>('');
   // set state from game object
   const [gameStatus, setGameStatus] = useState<TGameStatus>({
@@ -33,8 +35,10 @@ const Game = ({
         .filter((clue) => clue.solved)
         .map((item) => item.clueId),
       score: 0,
+      startTime: new Date(),
     },
   });
+
   const [location, setLocation] = useState({
     lat: startingLocation.lat,
     lng: startingLocation.lng,
@@ -78,6 +82,11 @@ const Game = ({
         ) {
           const duplicateGameStatus: TGameStatus = { ...gameStatus };
 
+          const updatedClueArray = [
+            ...(duplicateGameStatus[gameId]?.clueIds || []),
+            (updatedClue as { clue_id: string }).clue_id,
+          ];
+
           const updatedGameData: TGameStatus = {
             ...duplicateGameStatus,
             [gameId]: {
@@ -86,6 +95,7 @@ const Game = ({
                 ...(duplicateGameStatus[gameId]?.clueIds || []),
                 (updatedClue as { clue_id: string }).clue_id,
               ],
+              score: (updatedClueArray?.length || 0) * 10,
             },
           };
 
@@ -135,12 +145,25 @@ const Game = ({
     popupAnchor: [0, -10], // Position of the popup in relation to the marker
   });
 
+  const getTimeDifference = (date: string | number | Date) => {
+    const now = new Date();
+    const differenceInMilliseconds = +now - +new Date(date); // Get the difference in milliseconds
+
+    const differenceInMinutes = Math.floor(
+      differenceInMilliseconds / (1000 * 60)
+    );
+    const hours = Math.floor(differenceInMinutes / 60);
+    const minutes = differenceInMinutes % 60;
+
+    return { hours, minutes };
+  };
+
   const handleStartNewGame = () => {
     const userWantsToQuitGame = confirm('Are you sure?');
 
     if (userWantsToQuitGame) {
       document.cookie = `${UNIQUE_GUEST_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-      window.location.reload();
+      router.push('/');
     }
   };
 
@@ -182,6 +205,49 @@ const Game = ({
     }
   }, [name]);
 
+  useEffect(() => {
+    // declare the async data fetching function
+    const fetchData = async () => {
+      const { data: gameSessionCluesSolvedData } = await supabase
+        .from('game_session_clues_solved')
+        .select('*')
+        .eq('game_session_id', uniqueGameSession);
+
+      const { data: gameSessionData } = await supabase
+        .from('game_sessions')
+        .select(`created_at`)
+        .eq('id', uniqueGameSession);
+
+      return { gameSessionCluesSolvedData, gameSessionData };
+    };
+
+    try {
+      const result = fetchData();
+
+      result.then((cluesResponse) => {
+        const solvedClues = cluesResponse.gameSessionCluesSolvedData
+          ?.filter((clue) => clue.solved)
+          .map((clue) => clue.clue_id);
+
+        const duplicateGameStatus: TGameStatus = { ...gameStatus };
+
+        const updatedGameData: TGameStatus = {
+          ...duplicateGameStatus,
+          [gameId]: {
+            ...duplicateGameStatus[gameId],
+            clueIds: solvedClues,
+            score: (solvedClues?.length || 0) * 10,
+            startTime: cluesResponse?.gameSessionData?.[0]?.created_at || '',
+          },
+        };
+
+        setGameStatus(updatedGameData);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   return (
     <div className="h-100vh relative" style={{ height: '100vh' }}>
       {location.loaded ? (
@@ -191,16 +257,23 @@ const Game = ({
               Congratulations! You have completed the game.
             </h1>
             <h2 className="text-xl font-bold text-center mt-4">
+              In {getTimeDifference(gameStatus[gameId].startTime).hours} hours
+              and {getTimeDifference(gameStatus[gameId].startTime).minutes}{' '}
+              minutes
+            </h2>
+
+            <h2 className="text-2xl font-bold text-center mt-4">
               Your final score is: {gameStatus[gameId]?.score}
             </h2>
-            <Link
-              href="/"
+
+            <button
+              onClick={handleStartNewGame}
               className={
                 'py-2 px-8 w-full md:w-auto rounded-lg bg-gray-600 text-white inline-block mx-auto text-center mb-4'
               }
             >
-              Home
-            </Link>
+              Finish Game
+            </button>
           </div>
         ) : (
           <>
@@ -208,7 +281,7 @@ const Game = ({
               className="z-[1000] text-xs md:text-md fixed top-4 right-4 bg-white p-2 md:p-4 text-left text-black"
               onClick={handleStartNewGame}
             >
-              Score: {(gameStatus[gameId]?.clueIds?.length || 0) * 10}
+              Score: {gameStatus[gameId]?.score}
               <br />
               <br />
               Start New Game

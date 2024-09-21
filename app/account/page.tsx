@@ -13,7 +13,7 @@ const Account = async () => {
   }
 
   return (
-    <div className="flex flex-col container py-8 mx-auto text-center pt-24">
+    <div className="flex flex-col container py-8 max-w-128 mx-auto px-4 text-center pt-20">
       Logged in as {data.user.email}
       <h2 className="text-2xl">
         By Logging out you will lose access to any live games - are you sure you
