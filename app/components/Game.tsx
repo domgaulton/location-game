@@ -167,24 +167,6 @@ const Game = ({
     }
   };
 
-  const handleUpdateScore = (points: number) => {
-    const duplicateGameStatus: TGameStatus = { ...gameStatus };
-
-    const updatedScore = duplicateGameStatus[gameId]?.score
-      ? duplicateGameStatus[gameId]?.score + points
-      : points;
-
-    const updatedGameData: TGameStatus = {
-      ...duplicateGameStatus,
-      [gameId]: {
-        ...duplicateGameStatus[gameId],
-        score: updatedScore,
-      },
-    };
-
-    setGameStatus(updatedGameData);
-  };
-
   useEffect(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
@@ -320,7 +302,6 @@ const Game = ({
                     gameStatus[gameId]?.clueIds?.includes(clue.clueId) || false
                   }
                   points={clue.points}
-                  handleUpdateScore={handleUpdateScore}
                 />
               ))}
             </MapContainer>
@@ -341,7 +322,8 @@ const Game = ({
           </button>
 
           <p className="mb-4">
-            Once you have enabled location services, refresh the page to start
+            Once you have enabled location services, you might need to refresh
+            the page to start
           </p>
 
           {errorMessage && (

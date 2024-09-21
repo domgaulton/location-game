@@ -36,7 +36,6 @@ export type TGameData = {
 
 export type TMarkerClue = {
   currentLocation: TLocation;
-  handleUpdateScore: (points: number) => void;
 } & Pick<TGameData, 'gameId'> &
   Pick<
     TMarkerClueData,

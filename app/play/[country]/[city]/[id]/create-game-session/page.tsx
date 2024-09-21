@@ -65,8 +65,6 @@ export default function LoginPage({ params }: { params: { id: string } }) {
       result.then((resultResponse) => {
         const { userPurchaseData, gamesData } = resultResponse;
 
-        console.log({ userPurchaseData, gamesData });
-
         if (userPurchaseData && userPurchaseData.length > 0) {
           setHasCredits(true);
         }

@@ -8,8 +8,7 @@ import { Marker, Popup } from 'react-leaflet';
 import stringSimilarity from '../utils/stringSimilarity';
 import { createClient } from '../lib/supabase/client';
 
-// const LOCATION_ACCURACY = 0.008;
-const LOCATION_ACCURACY = 10;
+const LOCATION_ACCURACY = 0.008;
 
 const MarkerClue = ({
   clueId,
@@ -19,8 +18,6 @@ const MarkerClue = ({
   answer_reply,
   location,
   solved,
-  points,
-  handleUpdateScore,
 }: TMarkerClue) => {
   const [userAtClue, setUserAtClue] = useState(false);
   const [userAnswer, setUserAnswer] = useState<string>('');
@@ -61,8 +58,6 @@ const MarkerClue = ({
         game_session_id: uniqueGameSession,
         solved: true,
       });
-
-      handleUpdateScore(points);
     }
   };
 
