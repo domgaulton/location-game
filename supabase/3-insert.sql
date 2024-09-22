@@ -171,12 +171,6 @@ VALUES
   'Correct! The Portland Observatory is the last remaining maritime signal tower in the U.S. and offers spectacular views of the city.', 
   10, 
   2),
-  (12,
-  'Question 1', 
-  'Answer 1', 
-  'Answer on correct', 
-  10,
-  3),
   (11, 
   'What is the name of the notorious serial killer who terrorized London in 1888?', 
   'Jack the Ripper', 
@@ -231,6 +225,10 @@ VALUES
   (37, 'Find the mural hidden on a nearby wall. What word is hidden in the colorful design?', 'Rebel', 'Well done! The word "Rebel" celebrates Chippenham''s free-spirited youth culture.', 15, 7),
   (38, 'Which legendary figure is said to have once visited The Old Road Tavern?', 'King Alfred', 'Correct! Local legend has it that King Alfred himself stopped at The Old Road Tavern during his travels.', 10, 7),
   (39, 'What famous event happened near the River Avon in the 10th century?', 'The Battle of Chippenham', 'Yes! The Battle of Chippenham was a key moment in the town''s history, fought between the Anglo-Saxons and Vikings.', 20, 7);
+
+
+
+
 
 -- NEXT STEPS
 -- ENSURE TABLES ARE CREATED AND THEN ROWS INSERT
