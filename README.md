@@ -37,6 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ### TODOs
 
+- SQL CREATE without having to know row numbers
 - Before starting a game - confirm you want to buy a game for this one or another?
 - Say when a guest joins
 - Score in points in the game
@@ -44,3 +45,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - Time to go in current game
 - Finish score with score board for games - new table
 - Cookie decrypt logic - not just id of game session
+- e2e tests https://www.digitalocean.com/community/tutorials/how-to-write-end-to-end-tests-in-node-js-using-puppeteer-and-jest
+- AI to build you own
