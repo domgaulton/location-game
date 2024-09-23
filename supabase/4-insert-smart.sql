@@ -1,3 +1,7 @@
+-- Create a location based clue hunting game in Central London where users have to get to a location and from real life clues, for example signs on buildings or blue plaques, answer the question. The game should have at least 8 clues. 
+
+-- Then generate the information in the following format;
+
 -- ADD GAMES WITH LOCATION AND CLUES
 
 -- BEGIN;  -- Start transaction
