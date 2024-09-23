@@ -116,14 +116,16 @@ const MarkerClue = ({
                 )
               ) : (
                 <>
-                  <div>Not Correct: {submittedAnswer}</div>
+                  <div>Your Guess: {submittedAnswer}</div>
 
                   <div>
                     Hint:{' '}
-                    {answer
-                      .split('')
-                      .map((char) => (Math.random() > 0.7 ? char : '_')) // 70% chance to hide each character
-                      .join('')}
+                    <span className="tracking-widest">
+                      {answer
+                        .split('')
+                        .map((char) => (Math.random() > 0.7 ? char : '_')) // 70% chance to hide each character
+                        .join('')}
+                    </span>
                   </div>
                   <button
                     onClick={handleReset}
@@ -139,7 +141,7 @@ const MarkerClue = ({
                   type="text"
                   value={userAnswer}
                   onChange={handleInputChange}
-                  className="p-1 border border-gray-300 rounded dark:text-black"
+                  className="p-1 border border-gray-300 rounded dark:text-black text-base"
                   placeholder="Type your answer..."
                 />
                 <button
